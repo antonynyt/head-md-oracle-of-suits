@@ -84,8 +84,7 @@ In this way:
     - Or even physical with NFC cards
 - Parents listen to / read the story.
 
-Also did a new storyboard (user kinda journey) :
-![](./images/storyboard-2025-10-05.jpg)
+Also did a new storyboard (user kinda journey) [Open image](./images/storyboard-2025-10-05.jpg)
 
 ### Problems / questions the prototype helped identify:
 
