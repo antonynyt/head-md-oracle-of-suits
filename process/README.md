@@ -1,4 +1,4 @@
 # Process
 
-- [Concept](./concept-2025-10-01.md)
+- [Up to date concept](./concept-2025-10-09.md)
 - [Journal](journal.md)

@@ -97,3 +97,21 @@ Also did a new storyboard (user kinda journey) [Open image](./images/storyboard-
 
 - [ ] Give the Moustache symbolic meaning
 - [ ] Find story progression
+
+## Merge ideas in group (2025-10-07)
+
+We merged ideas together with Alireza because we are both interested in:
+- Fun, joyful, kid spirit
+- Story based
+- Progress
+- Clue
+- Physical
+- Collect
+
+We agreed in a interaction in which we collect fragments of the cards history, to complete the whole story.
+
+## New ideations (2025-10-09)
+
+We tried some new combinaisons between our stories but then came back to the moustache because it's a strong emotional element for children.
+
+We alos had some reflexions about problems but we had not our story defined so following Alexia's suggestions, we are refining the storyline and content details.
