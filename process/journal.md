@@ -114,4 +114,30 @@ We agreed in a interaction in which we collect fragments of the cards history, t
 
 We tried some new combinaisons between our stories but then came back to the moustache because it's a strong emotional element for children.
 
-We alos had some reflexions about problems but we had not our story defined so following Alexia's suggestions, we are refining the storyline and content details.
+We also had some reflexions about problems but we had not our story defined so following Alexia's suggestions, we are refining the storyline and content details.
+
+[New concept](./concept-2025-10-09.md)
+
+## Gesture Prototype (2025-10-13)
+
+We prototyped some ideas using the moustache as the interface but it felt wrong and we were stuck on the concept. (1) We prototyped a moustache dresser app do shape it like a crown or help the characters to solve an issue they may have. (2) We prototyped a box with a hole shaped moustache. To see what the interaction could be.
+
+We ended up with a lot independant pieces. That was too many constraints for one concept: moustache, gesture, historical anecdotes, liked between everything. Moustache as interface. It had lost his meaning.
+
+Rémi suggested the reverse thinking ideation process. What happens if we put a mustache on all the cards?
+So for our prototype we decided on 2 prototypes:
+- (A) We are in a card barber. We have to shave the mustache off the cards. By shaving the mustache, we reveal a hidden detail on the card. The goal is to make the deck as close to reality as possible.
+- (B) We have to put moustache using gesture on our face using our fingers.
+
+## User Test A/B (2025-10-15)
+
+We tested our 2 prototypes and got good insights on each.
+- (A): storytelling is appealing, shaving mecanisim is interesting because the tester put the razor directly on the screen. plus the combo of razor, moustache, story is great. The tester wanted more freewill: [Tester want to scratch the UI](./images/usertest1-behaviour1.png), [User want to scratch legs](./images/usertest1-behaviour2.png).
+- (B): we understand directly the gesture and the feedback was good, it was a bit repetitive and gesture were limited to what was planned.
+- overall the concept is too focused on male gender. we should look a gender neutral element.
+
+##  Light Pivot (2025-10-16)
+
+We brainstormed to look for a new gesture or overall experience. But nothing concluant.
+We adapted prototype A: The character is always waiting for someone to help him with the same gesture but in different ways.
+We took an "baton" that can act as a multi-tool and make different situations. The cards present themself and have details or demands. we use our "baton" to solve their issue by scraching, stamping, etc.
