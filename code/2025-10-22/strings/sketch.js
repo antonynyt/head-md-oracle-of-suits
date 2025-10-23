@@ -17,6 +17,7 @@ let lastVideoTime = -1;
 
 // Finger tip indices in MediaPipe hand landmarks
 const FINGER_TIPS = [4, 8, 12, 16, 20]; // Thumb, Index, Middle, Ring, Pinky
+const WRIST_INDEX = 0; // Wrist landmark
 
 // Track crosses for each hand (0 and 1) and finger
 const handCrosses = {
@@ -64,6 +65,24 @@ async function setup() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+}
+
+// Check if finger is extended by comparing distance to wrist
+function isFingerExtended(landmarks, fingerIndex) {
+  const tipIndex = FINGER_TIPS[fingerIndex];
+  const wrist = landmarks[WRIST_INDEX];
+  const tip = landmarks[tipIndex];
+  
+  // Calculate 3D distance between tip and wrist
+  const dx = tip.x - wrist.x;
+  const dy = tip.y - wrist.y;
+  const dz = tip.z - wrist.z;
+  const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+  
+  // Threshold varies by finger (thumb is shorter, pinky is shorter)
+  const thresholds = [0.15, 0.20, 0.22, 0.21, 0.18]; // Thumb, Index, Middle, Ring, Pinky
+  
+  return distance > thresholds[fingerIndex];
 }
 
 function draw() {
@@ -117,17 +136,20 @@ function draw() {
         // Update crosses for each detected hand
         results.landmarks.forEach((landmarks, handIndex) => {
           if (handIndex < 2) { // Only process first 2 hands
-            FINGER_TIPS.forEach(tipIndex => {
-              const tip = landmarks[tipIndex];
-              
-              // Map normalized coordinates to video display area
-              const x = videoDisplay.x + (1 - tip.x) * videoDisplay.width; // Mirror x
-              const y = videoDisplay.y + tip.y * videoDisplay.height;
-              
-              const cross = handCrosses[handIndex][tipIndex];
-              cross.x = x;
-              cross.y = y;
-              activeCrosses.push(cross);
+            FINGER_TIPS.forEach((tipIndex, fingerIndex) => {
+              // Only add cross if finger is extended
+              if (isFingerExtended(landmarks, fingerIndex)) {
+                const tip = landmarks[tipIndex];
+                
+                // Map normalized coordinates to video display area
+                const x = videoDisplay.x + (1 - tip.x) * videoDisplay.width; // Mirror x
+                const y = videoDisplay.y + tip.y * videoDisplay.height;
+                
+                const cross = handCrosses[handIndex][tipIndex];
+                cross.x = x;
+                cross.y = y;
+                activeCrosses.push(cross);
+              }
             });
           }
         });
