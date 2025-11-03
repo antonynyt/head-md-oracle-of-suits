@@ -7,7 +7,7 @@ let hands;
 let detections = null;
 let cam;
 let selfieMode = true;
-let gesture; // <- new
+let gesture;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -17,7 +17,7 @@ function setup() {
     videoElement.size(640, 480);
     videoElement.hide();
 
-    colorMode(HSB);
+    colorMode(HSB, 360, 100, 100, 100);
 
     // Initialize MediaPipe Hands
     hands = new Hands({
@@ -46,8 +46,6 @@ function setup() {
     });
 
     cam.start();
-
-    // instantiate classifier (ensure gesture.js is loaded before sketch.js)
     gesture = new GestureClassifier();
 }
 
@@ -57,23 +55,24 @@ function onHandsResults(results) {
 
 
 let circleRadius = 50;
-let cx = 0;
-let cy = 0;
+const BASE_CIRCLE_ALPHA = 50;
+let circleAlpha = BASE_CIRCLE_ALPHA;
+let cx = -100;
+let cy = -100;
 let targetX = 0;
 let targetY = 0;
-const lerpAmount = 0.95;
-const fadeTime = 2; // seconds
+const LERP_AMOUNT = 0.95;
+const FADE_TIME = 500;
+const FADE_DURATION = 3000;
 let lastMoveTime = 0;
-let circleAlpha = 255;
 
 function draw() {
-    background(200);
+    background(360, 0, 90); // white background (H=0, S=0, B=100)
 
     // draw landmarks and gesture labels
     if (detections && detections.multiHandLandmarks) {
         for (let i = 0; i < detections.multiHandLandmarks.length; i++) {
             const landmarks = detections.multiHandLandmarks[i];
-
             const closeness = gesture.classify(landmarks);
 
             targetX = 0;
@@ -92,17 +91,17 @@ function draw() {
             }
 
             // lerp from current position to target position
-            cx = lerp(cx, targetX, lerpAmount);
-            cy = lerp(cy, targetY, lerpAmount);
+            cx = lerp(cx, targetX, LERP_AMOUNT);
+            cy = lerp(cy, targetY, LERP_AMOUNT);
 
             if (closeness.state === 'closed') {
-                circleRadius = 20;
-            } else {
                 circleRadius = 50;
+            } else {
+                circleRadius = 20;
             }
 
             // draw label
-            fill(0, 0, 100); // white in HSB
+            fill(0, 0, 0); // black text (H=0, S=0, B=0)
             textSize(16);
             textAlign(LEFT, TOP);
             text(`Closeness: ${closeness.closure.toFixed(2)}`, 10, 10);
@@ -113,17 +112,20 @@ function draw() {
     }
 
     // calculate fade based on time since last movement
-    const timeSinceMove = (millis() - lastMoveTime) / 1000;
-    if (timeSinceMove < fadeTime) {
-        circleAlpha = 100; // full brightness in HSB
+    const timeSinceMove = millis() - lastMoveTime;
+    if (timeSinceMove < FADE_TIME) {
+        circleAlpha = BASE_CIRCLE_ALPHA;
     } else {
-        circleAlpha = max(0, 100 - ((timeSinceMove - fadeTime) * 100));
+        // fade out over FADE_DURATION seconds
+        const fadeProgress = (timeSinceMove - FADE_TIME) / FADE_DURATION;
+        circleAlpha = max(0, BASE_CIRCLE_ALPHA * (1 - fadeProgress));
     }
-
     // pointer with HSB color and alpha
     noStroke();
-    fill(300, 100, circleAlpha); // H=300 (magenta), S=100, B=circleAlpha
-    circle(cx, cy, circleRadius);
+    fill(0, 0, 0, circleAlpha);
+    // circle(cx, cy, circleRadius);
+    rect(cx - circleRadius, cy - circleRadius / 2, circleRadius*2, circleRadius/2);
+    rect(cx - circleRadius/4, cy, circleRadius/2, circleRadius*2);
 }
 
 window.setup = setup;
