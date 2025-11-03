@@ -3,7 +3,7 @@
 This is the folder for p5.js testing and exercises.
 
 ## Demos
-Link to the [live version](https://antonynyt.github.io/head-md-oracle-of-suits/).
+Link to the [live version](https://antonynyt.github.io/head-md-oracle-of-suits/code).
 
 - [2025-10-28](./2025-10-28/)
 
