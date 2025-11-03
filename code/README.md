@@ -2,7 +2,10 @@
 
 This is the folder for p5.js testing and exercises.
 
-## Days
+## Demos
+- [2025-10-28](./2025-10-28/)
+
+## Workshop Days
 - [2025-10-20](./2025-10-20/): p5.js
 - [2025-10-21](./2025-10-21/): p5.js
 - [2025-10-22](./2025-10-22/): p5.js + mediapipe hands
