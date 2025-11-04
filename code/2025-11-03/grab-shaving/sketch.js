@@ -54,7 +54,7 @@ function setup() {
     cam.start();
     gesture = new GestureClassifier();
     cursor = new Cursor();
-    moustache = new Moustache(200, 200, 200);
+    moustache = new Moustache(width / 2, height / 2, 200);
 }
 
 function onHandsResults(results) {
@@ -113,9 +113,11 @@ function draw() {
         endShape();
     }
 
-    moustache.escape(cursor.x, cursor.y);
-    moustache.float();
+    if (moustache.isTouching(cursor.x, cursor.y, cursor.radius)) {
+        moustache.jumpAway(cursor.x, cursor.y);
+    }
 
+    moustache.float();
     moustache.draw();
     cursor.draw();
 }

@@ -46,6 +46,15 @@ export class Moustache {
         endShape(CLOSE);
 
         pop();
+
+        // push();
+        // rectMode(CENTER);
+        // noFill();
+        // translate(this.x, this.y);
+        // strokeWeight(2);
+        // stroke(255, 100, 100);
+        // rect(0, 0, this.width, this.height);
+        // pop();
     }
 
     float() {
@@ -71,7 +80,39 @@ export class Moustache {
         this.y = constrain(this.y, halfHeight, height - halfHeight);
     }
 
-    escape(targetX, targetY, pathToFollow) {
+    jumpTo(x, y) {
+        // make the moustache move to new position with lerp
+        this.x = lerp(this.x, x, 0.1);
+        this.y = lerp(this.y, y, 0.1);
+    }
+
+    isTouching(cursorX, cursorY, cursorRadius) {
+        // Rectangle collision detection with circle
+        const halfWidth = this.width / 2;
+        const halfHeight = this.height / 2;
+        
+        // Find closest point on rectangle to cursor center
+        const closestX = constrain(cursorX, this.x - halfWidth, this.x + halfWidth);
+        const closestY = constrain(cursorY, this.y - halfHeight, this.y + halfHeight);
+        
+        // Calculate distance from cursor center to closest point
+        const distance = dist(cursorX, cursorY, closestX, closestY);
+        
+        return distance < cursorRadius;
+    }
+
+    jumpAway(cursorX, cursorY) {
+        // Calculate direction away from cursor
+        const dx = this.x - cursorX;
+        const dy = this.y - cursorY;
+        const distance = dist(this.x, this.y, cursorX, cursorY);
+        
+        if (distance > 0) {
+            // Apply jump force away from cursor
+            const jumpForce = 20;
+            this.ax += (dx / distance) * jumpForce;
+            this.ay += (dy / distance) * jumpForce;
+        }
     }
 
 }
