@@ -76,9 +76,9 @@ function draw() {
         //scale image down proportionally to width
         let imgWidth = king.width;
         let imgHeight = king.height;
-        const maxImgWidth = width / 2;
-        if (imgWidth > maxImgWidth) {
-            const scaleFactor = maxImgWidth / imgWidth;
+        const maxImgHeight = height * 0.95;
+        if (imgHeight > maxImgHeight) {
+            const scaleFactor = maxImgHeight / imgHeight;
             imgWidth *= scaleFactor;
             imgHeight *= scaleFactor;
         }
