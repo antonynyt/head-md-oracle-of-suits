@@ -141,3 +141,33 @@ We tested our 2 prototypes and got good insights on each.
 We brainstormed to look for a new gesture or overall experience. But nothing concluant.
 We adapted prototype A: The character is always waiting for someone to help him with the same gesture but in different ways.
 We took an "baton" that can act as a multi-tool and make different situations. The cards present themself and have details or demands. we use our "baton" to solve their issue by scraching, stamping, etc.
+
+## Back to initial with a twist (2025-10-28)
+
+**Motivation: 6/10**
+
+We went back again to moustache. Concept is now updated in Ali's GitHub. he wanted to be in charge of the "Captain's log" that fine so he learns GitHub :). And also how to log [Ali's GitHub](https://github.com/AlirezaAsna/head-md-oracle-of-suits/tree/main/concept).
+
+I made a small code test to detect the hand closed based on Pierre boilerplate. Not satisfied yet on the calculations. Douglas suggested using angle instead of finger tip to hand distance. Heuristic for sure, no fine tuning.
+
+I'm also starting to log my motivation. Just for my future me.
+
+## Physical form (3.11)
+
+**Motivation AM: 7/10 - PM: 4/10**
+
+On a été surpris par l'installation soudaine de la structure physique pour la fin la semaine prochaine. C'est une bonne chose ça à redynamiser notre groupe pendant 10 minutes. Highlight: atelier bois, nouvel environnement loin du projet.
+
+Avec Ali, on en avait pas vraiment re-réfléchi, j'ai pris quelques décisions sur ce que je me sens capable de faire. Et je suis un peu déçu. J'ai descendu mes attentes sur ce projet à -1203%.
+
+## j'arrête ou pas? (2025-11-04)
+
+**Motivation: j'arrête le master/10** — **Mood: boucle infernal négative**
+
+[Le log est ici.](./2025-11-04.md)
+
+Ah, on doit penser à la forme 3D du comment du pourquoi du rasoir pour jeudi matin:
+- Presentation courte:
+- Jeudi -> 10 minutes expliquer l’avancement
+
+[Live du code amélioré d'aujourd'hui](https://antonynyt.github.io/head-md-oracle-of-suits/code/2025-11-03/grab-shaving) avec un [screenshot](./images/code-2025-11-04.png)
