@@ -1,4 +1,6 @@
 import { GestureClassifier } from "./class/Gesture.js";
+import { Cursor } from "./class/Cursor.js";
+import { Moustache } from "./class/Moustache.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
 
@@ -8,6 +10,10 @@ let detections = null;
 let cam;
 let selfieMode = true;
 let gesture;
+let cursor;
+let moustache;
+let shavingPath = [];
+let isShaving = false;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -27,7 +33,7 @@ function setup() {
     });
 
     hands.setOptions({
-        maxNumHands: 2,
+        maxNumHands: 1,
         modelComplexity: 1,
         minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.1,
@@ -47,24 +53,13 @@ function setup() {
 
     cam.start();
     gesture = new GestureClassifier();
+    cursor = new Cursor();
+    moustache = new Moustache(200, 200, 200);
 }
 
 function onHandsResults(results) {
     detections = results;
 }
-
-
-let circleRadius = 50;
-const BASE_CIRCLE_ALPHA = 50;
-let circleAlpha = BASE_CIRCLE_ALPHA;
-let cx = -100;
-let cy = -100;
-let targetX = 0;
-let targetY = 0;
-const LERP_AMOUNT = 0.95;
-const FADE_TIME = 500;
-const FADE_DURATION = 3000;
-let lastMoveTime = 0;
 
 function draw() {
     background(360, 0, 90); // white background (H=0, S=0, B=100)
@@ -75,8 +70,8 @@ function draw() {
             const landmarks = detections.multiHandLandmarks[i];
             const closeness = gesture.classify(landmarks);
 
-            targetX = 0;
-            targetY = 0;
+            let targetX = 0;
+            let targetY = 0;
             for (let j = 0; j < landmarks.length; j++) {
                 targetX += landmarks[j].x * width;
                 targetY += landmarks[j].y * height;
@@ -84,20 +79,16 @@ function draw() {
             targetX /= landmarks.length;
             targetY /= landmarks.length;
 
-            // check if hand moved significantly
-            const distance = dist(cx, cy, targetX, targetY);
-            if (distance > 1) {
-                lastMoveTime = millis();
-            }
-
-            // lerp from current position to target position
-            cx = lerp(cx, targetX, LERP_AMOUNT);
-            cy = lerp(cy, targetY, LERP_AMOUNT);
+            cursor.update(targetX, targetY);
 
             if (closeness.state === 'closed') {
-                circleRadius = 50;
+                cursor.setRadius(50);
+
+                if (!isShaving) isShaving = true;
+                shavingPath.push(createVector(cursor.x, cursor.y));
             } else {
-                circleRadius = 20;
+                cursor.setRadius(20);
+                if (isShaving) isShaving = false;
             }
 
             // draw label
@@ -111,21 +102,22 @@ function draw() {
         }
     }
 
-    // calculate fade based on time since last movement
-    const timeSinceMove = millis() - lastMoveTime;
-    if (timeSinceMove < FADE_TIME) {
-        circleAlpha = BASE_CIRCLE_ALPHA;
-    } else {
-        // fade out over FADE_DURATION seconds
-        const fadeProgress = (timeSinceMove - FADE_TIME) / FADE_DURATION;
-        circleAlpha = max(0, BASE_CIRCLE_ALPHA * (1 - fadeProgress));
+    if (shavingPath.length > 1) {
+        noFill();
+        stroke(0, 0, 100); // black stroke
+        strokeWeight(50);
+        beginShape();
+        for (let point of shavingPath) {
+            vertex(point.x, point.y);
+        }
+        endShape();
     }
-    // pointer with HSB color and alpha
-    noStroke();
-    fill(0, 0, 0, circleAlpha);
-    // circle(cx, cy, circleRadius);
-    rect(cx - circleRadius, cy - circleRadius / 2, circleRadius*2, circleRadius/2);
-    rect(cx - circleRadius/4, cy, circleRadius/2, circleRadius*2);
+
+    moustache.escape(cursor.x, cursor.y);
+    moustache.float();
+
+    moustache.draw();
+    cursor.draw();
 }
 
 window.setup = setup;
