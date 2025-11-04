@@ -45,7 +45,7 @@ Storytelling about **"The Lost Moustache."** A talkative little moustache is try
 
 ## Concept (2025-10-02)
 
-[Concept & research summary](concept-2025-10-01.md)
+[Concept & research summary](2025-10-01.md)
 
 ## Thoughts on the process (2025-10-03)
 
@@ -116,7 +116,7 @@ We tried some new combinaisons between our stories but then came back to the mou
 
 We also had some reflexions about problems but we had not our story defined so following Alexia's suggestions, we are refining the storyline and content details.
 
-[New concept](./concept-2025-10-09.md)
+[New concept](./2025-10-09.md)
 
 ## Gesture Prototype (2025-10-13)
 
