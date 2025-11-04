@@ -167,7 +167,10 @@ Avec Ali, on en avait pas vraiment re-réfléchi, j'ai pris quelques décisions 
 [Le log est ici.](./2025-11-04.md)
 
 Ah, on doit penser à la forme 3D du comment du pourquoi du rasoir pour jeudi matin:
-- Presentation courte:
+- Encore une presentation courte du concept lol:
 - Jeudi -> 10 minutes expliquer l’avancement
+- Bon iels essaient de nous donner des deadlines j'ai capté tkt.
 
-[Live du code amélioré d'aujourd'hui](https://antonynyt.github.io/head-md-oracle-of-suits/code/2025-11-03/grab-shaving) avec un [screenshot](./images/code-2025-11-04.png)
+[Live du code amélioré d'aujourd'hui](https://antonynyt.github.io/head-md-oracle-of-suits/code/2025-11-03/grab-shaving) avec un [screenshot](./images/code-2025-11-04.png).
+
+D'ailleurs les gestes ça bug un max quand c'est loin, ou proche ou avec lumière ou pas avec lumière ou vitesse, surtout vite ça bug super bcp.
