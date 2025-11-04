@@ -60,8 +60,8 @@ export class Moustache {
     float() {
         // Animate position with Perlin noise
         const time = frameCount * 0.005; // Slower time increment
-        this.x += (noise(time) - 0.5) * 0.3; // Small, slow jiggle
-        this.y += (noise(time + 1000) - 0.5) * 0.3; // Small, slow jiggle
+        //this.x += (noise(time) - 0.5) * 0.3; // Small, slow jiggle
+        //this.y += (noise(time + 1000) - 0.5) * 0.3; // Small, slow jiggle
 
         // Physics update
         this.vx += this.ax;
@@ -90,14 +90,14 @@ export class Moustache {
         // Rectangle collision detection with circle
         const halfWidth = this.width / 2;
         const halfHeight = this.height / 2;
-        
+
         // Find closest point on rectangle to cursor center
         const closestX = constrain(cursorX, this.x - halfWidth, this.x + halfWidth);
         const closestY = constrain(cursorY, this.y - halfHeight, this.y + halfHeight);
-        
+
         // Calculate distance from cursor center to closest point
         const distance = dist(cursorX, cursorY, closestX, closestY);
-        
+
         return distance < cursorRadius;
     }
 
@@ -106,7 +106,7 @@ export class Moustache {
         const dx = this.x - cursorX;
         const dy = this.y - cursorY;
         const distance = dist(this.x, this.y, cursorX, cursorY);
-        
+
         if (distance > 0) {
             // Apply jump force away from cursor
             const jumpForce = 20;

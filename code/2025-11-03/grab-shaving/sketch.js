@@ -15,6 +15,14 @@ let moustache;
 let shavingPath = [];
 let isShaving = false;
 
+//IMAGE
+let king;
+
+function preload() {
+    // preload assets if any
+    king = loadImage("./assets/img/card.png");
+}
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
@@ -47,14 +55,14 @@ function setup() {
         onFrame: async () => {
             await hands.send({ image: videoElement.elt });
         },
-        width: 640,
-        height: 480
+        width: width,
+        height: height
     });
 
     cam.start();
     gesture = new GestureClassifier();
     cursor = new Cursor();
-    moustache = new Moustache(width / 2, height / 2, 200);
+    moustache = new Moustache(width / 2, height / 2, 250);
 }
 
 function onHandsResults(results) {
@@ -62,7 +70,19 @@ function onHandsResults(results) {
 }
 
 function draw() {
-    background(360, 0, 90); // white background (H=0, S=0, B=100)
+    background(222, 21, 100); // white background (H=0, S=0, B=100)
+
+        imageMode(CENTER);
+        //scale image down proportionally to width
+        let imgWidth = king.width;
+        let imgHeight = king.height;
+        const maxImgWidth = width / 2;
+        if (imgWidth > maxImgWidth) {
+            const scaleFactor = maxImgWidth / imgWidth;
+            imgWidth *= scaleFactor;
+            imgHeight *= scaleFactor;
+        }
+        image(king, width / 2, height / 2, imgWidth, imgHeight);
 
     // draw landmarks and gesture labels
     if (detections && detections.multiHandLandmarks) {
@@ -73,17 +93,35 @@ function draw() {
             let targetX = 0;
             let targetY = 0;
             for (let j = 0; j < landmarks.length; j++) {
-                targetX += landmarks[j].x * width;
-                targetY += landmarks[j].y * height;
+                targetX += landmarks[j].x;
+                targetY += landmarks[j].y;
             }
             targetX /= landmarks.length;
             targetY /= landmarks.length;
 
-            cursor.update(targetX, targetY);
+            // Apply aspect ratio correction using COVER scaling
+            const videoAspect = 640 / 480; // video capture aspect ratio
+            const canvasAspect = width / height;
+            
+            let mappedX, mappedY;
+            if (canvasAspect > videoAspect) {
+                // Canvas is wider - scale based on width to cover
+                const scaledHeight = width / videoAspect;
+                const offsetY = (height - scaledHeight) / 2;
+                mappedX = targetX * width;
+                mappedY = targetY * scaledHeight + offsetY;
+            } else {
+                // Canvas is taller - scale based on height to cover
+                const scaledWidth = height * videoAspect;
+                const offsetX = (width - scaledWidth) / 2;
+                mappedX = targetX * scaledWidth + offsetX;
+                mappedY = targetY * height;
+            }
+
+            cursor.update(mappedX, mappedY);
 
             if (closeness.state === 'closed') {
                 cursor.setRadius(50);
-
                 if (!isShaving) isShaving = true;
                 shavingPath.push(createVector(cursor.x, cursor.y));
             } else {
@@ -104,8 +142,11 @@ function draw() {
 
     if (shavingPath.length > 1) {
         noFill();
-        stroke(0, 0, 100); // black stroke
-        strokeWeight(50);
+        stroke(0, 0, 100);
+        //sharp stroke
+        strokeJoin(ROUND);
+        strokeCap(SQUARE);
+        strokeWeight(100);
         beginShape();
         for (let point of shavingPath) {
             vertex(point.x, point.y);
@@ -124,3 +165,4 @@ function draw() {
 
 window.setup = setup;
 window.draw = draw;
+window.preload = preload;
