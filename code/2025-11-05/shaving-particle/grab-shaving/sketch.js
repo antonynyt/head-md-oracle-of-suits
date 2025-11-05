@@ -13,10 +13,14 @@ let gesture;
 let cursor;
 let moustache;
 let isShaving = false;
+
+//images
 let king;
+let moustacheImg;
 
 function preload() {
     king = loadImage("./assets/img/king.png");
+    moustacheImg = loadImage("./assets/img/moustache.png");
 }
 
 function setup() {
@@ -53,7 +57,7 @@ function setup() {
     cam.start();
     gesture = new GestureClassifier();
     cursor = new Cursor();
-    moustache = new Moustache(width / 2, height / 2 - 70, 300);
+    moustache = new Moustache(width / 2, height / 2 - 50, 300, moustacheImg);
 }
 
 function onHandsResults(results) {
@@ -67,10 +71,16 @@ function draw() {
     let imgWidth = king.width;
     let imgHeight = king.height;
     const maxImgHeight = height * 0.95;
+    const maxImgWidth = width;
     if (imgHeight > maxImgHeight) {
-        const scaleFactor = maxImgHeight / imgHeight;
-        imgWidth *= scaleFactor;
-        imgHeight *= scaleFactor;
+        const scale = maxImgHeight / imgHeight;
+        imgHeight = maxImgHeight;
+        imgWidth = imgWidth * scale;
+    }
+    if (imgWidth > maxImgWidth) {
+        const scale = maxImgWidth / imgWidth;
+        imgWidth = maxImgWidth;
+        imgHeight = imgHeight * scale;
     }
     image(king, width / 2, height / 2, imgWidth, imgHeight);
     
