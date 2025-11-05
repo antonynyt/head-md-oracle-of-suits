@@ -174,3 +174,14 @@ Ah, on doit penser à la forme 3D du comment du pourquoi du rasoir pour jeudi ma
 [Live du code amélioré d'aujourd'hui](https://antonynyt.github.io/head-md-oracle-of-suits/code/2025-11-03/grab-shaving) avec un [screenshot](./images/code-2025-11-04.png).
 
 D'ailleurs les gestes ça bug un max quand c'est loin, ou proche ou avec lumière ou pas avec lumière ou vitesse, surtout vite ça bug super bcp.
+
+
+## It's taking shape
+
+**Motivation: 6/10**
+
+We worked on the graphic design today and started implement the design and the first 2 sequences of the intro in the new [storyboard](./images/new-storyboard-2025-11-05.jpg). The main interaction (shaving is working fine). The second interaction (moustache escape, should work, it was implemented).
+
+Ali made some [razors shapes](./images/rasor-2025-11-05.jpg) the wood workshop and the kick ass illustrations. We can then test which one works the best. We keep in mind on Laure's input to how we want to present this rasor: holy rasor or bunch of rasor on a table.
+
+Douglas helped a lot with understanding P5JS and the canvas concept. This is really a new world and I should take the time to read [NatureOfCode](https://natureofcode.com/).
