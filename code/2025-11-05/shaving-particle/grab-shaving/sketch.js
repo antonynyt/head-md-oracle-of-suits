@@ -12,7 +12,7 @@ let selfieMode = true;
 let gesture;
 let cursor;
 let moustache;
-let isShaving = false;
+let isFullyErased = false;
 
 //images
 let king;
@@ -57,7 +57,7 @@ function setup() {
     cam.start();
     gesture = new GestureClassifier();
     cursor = new Cursor();
-    moustache = new Moustache(width / 2, height / 2 - 50, 300, moustacheImg);
+    moustache = new Moustache(width / 2 - 10, height / 2 - 15, 500, moustacheImg);
 }
 
 function onHandsResults(results) {
@@ -125,10 +125,14 @@ function landmarks() {
             
             if (closeness.state === 'closed') {
                 cursor.setRadius(50);
-                isShaving = true;
+                // erase moustache under the cursor (use canvas coords)
+                moustache.eraseAt(mappedX, mappedY, cursor.radius || 50);
+                if (moustache.isFullyErased()) {
+                    // If the moustache is fully erased, trigger a "shaving" event
+                    isFullyErased = true;
+                }
             } else {
                 cursor.setRadius(20);
-                isShaving = false;
             }
             
             fill(0, 0, 0);
