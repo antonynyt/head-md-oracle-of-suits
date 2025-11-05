@@ -16,11 +16,13 @@ let isFullyErased = false;
 
 //images
 let king;
-let moustacheImg;
+let moustacheImg = [];
+let pattern;
 
 function preload() {
     king = loadImage("./assets/img/king.png");
-    moustacheImg = loadImage("./assets/img/moustache.png");
+    moustacheImg.push(loadImage("./assets/img/moustache-0.png"));
+    pattern = loadImage("./assets/img/pattern.png");
 }
 
 function setup() {
@@ -57,7 +59,11 @@ function setup() {
     cam.start();
     gesture = new GestureClassifier();
     cursor = new Cursor();
-    moustache = new Moustache(width / 2 - 10, height / 2 - 15, 500, moustacheImg);
+    moustache = new Moustache(width / 2 - 10, height * 0.62, 500, moustacheImg[0]);
+}
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
 }
 
 function onHandsResults(results) {
@@ -65,12 +71,25 @@ function onHandsResults(results) {
 }
 
 function draw() {
-    background(222, 21, 100);
+    background(227, 84, 40);
+    //add pattern overlay
+    //aspect cover image
+    imageMode(CORNER);
+    let patternWidth = pattern.width;
+    let patternHeight = pattern.height;
+    const maxPatternHeight = height;
+    if (patternHeight > maxPatternHeight) {
+        const scale = maxPatternHeight / patternHeight;
+        patternHeight = maxPatternHeight;
+        patternWidth = patternWidth * scale;
+    }
+    image(pattern, 0, 0, patternWidth, patternHeight);
+    noTint();
     
     imageMode(CENTER);
     let imgWidth = king.width;
     let imgHeight = king.height;
-    const maxImgHeight = height * 0.95;
+    const maxImgHeight = height * 0.8;
     const maxImgWidth = width;
     if (imgHeight > maxImgHeight) {
         const scale = maxImgHeight / imgHeight;
@@ -82,7 +101,8 @@ function draw() {
         imgWidth = maxImgWidth;
         imgHeight = imgHeight * scale;
     }
-    image(king, width / 2, height / 2, imgWidth, imgHeight);
+
+    image(king, width / 2, height - imgHeight / 2 + 20, imgWidth, imgHeight);
     
     landmarks();
     
@@ -146,3 +166,4 @@ function landmarks() {
 window.setup = setup;
 window.draw = draw;
 window.preload = preload;
+window.windowResized = windowResized;
