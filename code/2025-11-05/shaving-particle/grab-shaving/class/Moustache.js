@@ -21,20 +21,20 @@ export class Moustache {
         }
 
         // offscreen buffer same size as canvas
-        this.pg = createGraphics(width, height);
-        this.pg.clear();
-        this.pg.imageMode(CENTER);
-        // draw initial moustache into the buffer
-        if (this.img) {
-            const h = this.img.height;
-            const ratio = h > 0 ? (this.img.width / h) : 1;
-            this.pg.image(this.img, this.x, this.y, this.w, this.w * (h / this.img.width));
-        } else {
-            this.pg.noStroke();
-            this.pg.fill(30, 80, 40);
-            this.pg.ellipse(this.x - this.w * 0.25, this.y, this.w * 0.5, this.w * 0.25);
-            this.pg.ellipse(this.x + this.w * 0.25, this.y, this.w * 0.5, this.w * 0.25);
-        }
+        // this.pg = createGraphics(width, height);
+        // this.pg.clear();
+        // this.pg.imageMode(CENTER);
+        // // draw initial moustache into the buffer
+        // if (this.img) {
+        //     const h = this.img.height;
+        //     const ratio = h > 0 ? (this.img.width / h) : 1;
+        //     this.pg.image(this.img, this.x, this.y, this.w, this.w * (h / this.img.width));
+        // } else {
+        //     this.pg.noStroke();
+        //     this.pg.fill(30, 80, 40);
+        //     this.pg.ellipse(this.x - this.w * 0.25, this.y, this.w * 0.5, this.w * 0.25);
+        //     this.pg.ellipse(this.x + this.w * 0.25, this.y, this.w * 0.5, this.w * 0.25);
+        // }
     }
 
     // erase a circular area on the moustache buffer (make it transparent)
@@ -49,9 +49,18 @@ export class Moustache {
     }
 
     draw() {
-        imageMode(CORNER);
+        imageMode(CENTER);
+        push();
+        translate(this.x, this.y);
+        //rotate(sin(frameCount * 0.05) * 0.1);
+        let rotationSpeed = 0.02;
+        let noiseValue = noise(frameCount * rotationSpeed) * 1.0 - 0.5;
+        //clamp the rotation to a smaller range
+        noiseValue = constrain(noiseValue, -0.3, 0.3);
+        rotate(noiseValue);
+        image(this.img, 0, 0, this.w, this.w * (this.img.height / this.img.width));
+        pop();
         // draw moustache buffer on top of the king image
-        image(this.pg, 0, 0);
     }
 
     float() {
