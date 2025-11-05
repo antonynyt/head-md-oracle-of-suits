@@ -12,34 +12,26 @@ let selfieMode = true;
 let gesture;
 let cursor;
 let moustache;
-let shavingPath = [];
 let isShaving = false;
-
-//IMAGE
 let king;
 
 function preload() {
-    // preload assets if any
     king = loadImage("./assets/img/king.png");
 }
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-
-    // hidden video capture used by MediaPipe Camera util
+    
     videoElement = createCapture(VIDEO, { flipped: selfieMode });
     videoElement.size(640, 480);
     videoElement.hide();
-
+    
     colorMode(HSB, 360, 100, 100, 100);
-
-    // Initialize MediaPipe Hands
+    
     hands = new Hands({
-        locateFile: (file) => {
-            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-        }
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
     });
-
+    
     hands.setOptions({
         maxNumHands: 1,
         modelComplexity: 1,
@@ -47,10 +39,9 @@ function setup() {
         minTrackingConfidence: 0.1,
         selfieMode: selfieMode,
     });
-
+    
     hands.onResults(onHandsResults);
-
-    // feed frames from the p5 video element to MediaPipe
+    
     cam = new Camera(videoElement.elt, {
         onFrame: async () => {
             await hands.send({ image: videoElement.elt });
@@ -58,7 +49,7 @@ function setup() {
         width: width,
         height: height
     });
-
+    
     cam.start();
     gesture = new GestureClassifier();
     cursor = new Cursor();
@@ -70,26 +61,31 @@ function onHandsResults(results) {
 }
 
 function draw() {
-    background(222, 21, 100); // white background (H=0, S=0, B=100)
+    background(222, 21, 100);
+    
+    imageMode(CENTER);
+    let imgWidth = king.width;
+    let imgHeight = king.height;
+    const maxImgHeight = height * 0.95;
+    if (imgHeight > maxImgHeight) {
+        const scaleFactor = maxImgHeight / imgHeight;
+        imgWidth *= scaleFactor;
+        imgHeight *= scaleFactor;
+    }
+    image(king, width / 2, height / 2, imgWidth, imgHeight);
+    
+    landmarks();
+    
+    moustache.draw();
+    cursor.draw();
+}
 
-        imageMode(CENTER);
-        //scale image down proportionally to width
-        let imgWidth = king.width;
-        let imgHeight = king.height;
-        const maxImgHeight = height * 0.95;
-        if (imgHeight > maxImgHeight) {
-            const scaleFactor = maxImgHeight / imgHeight;
-            imgWidth *= scaleFactor;
-            imgHeight *= scaleFactor;
-        }
-        image(king, width / 2, height / 2, imgWidth, imgHeight);
-
-    // draw landmarks and gesture labels
+function landmarks() {
     if (detections && detections.multiHandLandmarks) {
         for (let i = 0; i < detections.multiHandLandmarks.length; i++) {
             const landmarks = detections.multiHandLandmarks[i];
             const closeness = gesture.classify(landmarks);
-
+            
             let targetX = 0;
             let targetY = 0;
             for (let j = 0; j < landmarks.length; j++) {
@@ -98,70 +94,39 @@ function draw() {
             }
             targetX /= landmarks.length;
             targetY /= landmarks.length;
-
-            // Apply aspect ratio correction using COVER scaling
-            const videoAspect = 640 / 480; // video capture aspect ratio
+            
+            const videoAspect = 640 / 480;
             const canvasAspect = width / height;
             
             let mappedX, mappedY;
             if (canvasAspect > videoAspect) {
-                // Canvas is wider - scale based on width to cover
                 const scaledHeight = width / videoAspect;
                 const offsetY = (height - scaledHeight) / 2;
                 mappedX = targetX * width;
                 mappedY = targetY * scaledHeight + offsetY;
             } else {
-                // Canvas is taller - scale based on height to cover
                 const scaledWidth = height * videoAspect;
                 const offsetX = (width - scaledWidth) / 2;
                 mappedX = targetX * scaledWidth + offsetX;
                 mappedY = targetY * height;
             }
-
+            
             cursor.update(mappedX, mappedY);
-
+            
             if (closeness.state === 'closed') {
                 cursor.setRadius(50);
-                if (!isShaving) isShaving = true;
-                shavingPath.push(createVector(cursor.x, cursor.y));
+                isShaving = true;
             } else {
                 cursor.setRadius(20);
-                if (isShaving) isShaving = false;
+                isShaving = false;
             }
-
-            // draw label
-            fill(0, 0, 0); // black text (H=0, S=0, B=0)
+            
+            fill(0, 0, 0);
             textSize(16);
             textAlign(LEFT, TOP);
             text(`Closeness: ${closeness.closure.toFixed(2)}`, 10, 10);
-
-            // draw hand
-            //gesture.drawHands(landmarks);
         }
     }
-
-    if (shavingPath.length > 1) {
-        noFill();
-        stroke(0, 0, 100);
-        //sharp stroke
-        strokeJoin(ROUND);
-        strokeCap(SQUARE);
-        strokeWeight(100);
-        beginShape();
-        for (let point of shavingPath) {
-            vertex(point.x, point.y);
-        }
-        endShape();
-    }
-
-    if (moustache.isTouching(cursor.x, cursor.y, cursor.radius)) {
-        moustache.jumpAway(cursor.x, cursor.y);
-    }
-
-    moustache.float();
-    moustache.draw();
-
-    cursor.draw();
 }
 
 window.setup = setup;

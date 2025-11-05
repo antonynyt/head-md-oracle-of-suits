@@ -8,8 +8,6 @@ export class Moustache {
         this.vy = 0;
         this.ax = 0;
         this.ay = 0;
-
-        // Rectangle dimensions based on the SVG path
         this.width = 854 * this.scale;
         this.height = 209 * this.scale;
     }
@@ -39,46 +37,27 @@ export class Moustache {
     }
 
     draw() {
+
         push();
         translate(this.x, this.y);
         scale(this.scale);
         translate(-427, -104.5);
-
         noStroke();
         fill(20, 100, 100);
-
-        // moustache shape
         this._moustacheShape();
-
         pop();
-
-        // push();
-        // rectMode(CENTER);
-        // noFill();
-        // translate(this.x, this.y);
-        // strokeWeight(2);
-        // stroke(255, 100, 100);
-        // rect(0, 0, this.width, this.height);
-        // pop();
     }
 
     float() {
-        // Animate position with Perlin noise
-        const time = frameCount * 0.005; // Slower time increment
-        //this.x += (noise(time) - 0.5) * 0.3; // Small, slow jiggle
-        //this.y += (noise(time + 1000) - 0.5) * 0.3; // Small, slow jiggle
-
-        // Physics update
         this.vx += this.ax;
         this.vy += this.ay;
         this.x += this.vx;
         this.y += this.vy;
-        this.vx *= 0.85; // less damping for faster movement
+        this.vx *= 0.85;
         this.vy *= 0.85;
         this.ax = 0;
         this.ay = 0;
 
-        // Hard clamp to ensure it never goes out of bounds
         const halfWidth = this.width / 2;
         const halfHeight = this.height / 2;
         this.x = constrain(this.x, halfWidth, width - halfWidth);
@@ -92,32 +71,23 @@ export class Moustache {
     }
 
     isTouching(cursorX, cursorY, cursorRadius) {
-        // Rectangle collision detection with circle
         const halfWidth = this.width / 2;
         const halfHeight = this.height / 2;
-
-        // Find closest point on rectangle to cursor center
         const closestX = constrain(cursorX, this.x - halfWidth, this.x + halfWidth);
         const closestY = constrain(cursorY, this.y - halfHeight, this.y + halfHeight);
-
-        // Calculate distance from cursor center to closest point
         const distance = dist(cursorX, cursorY, closestX, closestY);
-
         return distance < cursorRadius;
     }
 
     jumpAway(cursorX, cursorY) {
-        // Calculate direction away from cursor
         const dx = this.x - cursorX;
         const dy = this.y - cursorY;
         const distance = dist(this.x, this.y, cursorX, cursorY);
 
         if (distance > 0) {
-            // Immediate velocity impulse away from cursor (no lerp)
-            const jumpSpeed = 12; // tune this value for stronger/weaker jump
+            const jumpSpeed = 12;
             this.vx = (dx / distance) * jumpSpeed;
             this.vy = (dy / distance) * jumpSpeed;
         }
     }
-
 }
