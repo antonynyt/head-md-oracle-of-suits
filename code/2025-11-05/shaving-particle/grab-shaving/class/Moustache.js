@@ -1,5 +1,5 @@
 export class Moustache {
-    constructor(x, y, w, img = null) {
+    constructor(x, y, w, img) {
         this.x = x;
         this.y = y;
         this.w = w;
@@ -20,6 +20,19 @@ export class Moustache {
             this.height = this.w * 0.5;
         }
 
+        // create an offscreen graphics buffer for the moustache size of img
+        this.pg = createGraphics(this.w, this.height);
+        this.pg.clear();
+        this.pg.imageMode(CENTER);
+
+        // draw initial moustache into the buffer
+        this.pg.image(this.img, this.w / 2, this.height / 2, this.w, this.height);
+
+
+
+
+
+
         // offscreen buffer same size as canvas
         // this.pg = createGraphics(width, height);
         // this.pg.clear();
@@ -39,13 +52,25 @@ export class Moustache {
 
     // erase a circular area on the moustache buffer (make it transparent)
     eraseAt(px, py, radius) {
-        if (!this.pg) return;
+        // offset px, py to moustache buffer coords
+        const offsetX = px - (this.x - this.w / 2);
+        const offsetY = py - (this.y - this.height / 2);
+
         this.pg.push();
         this.pg.erase();
         this.pg.noStroke();
-        this.pg.ellipse(px, py, radius * 2, radius * 2);
+        this.pg.ellipse(offsetX, offsetY, radius * 2, radius * 2);
         this.pg.noErase();
         this.pg.pop();
+
+
+        // if (!this.pg) return;
+        // this.pg.push();
+        // this.pg.erase();
+        // this.pg.noStroke();
+        // this.pg.ellipse(px, py, radius * 2, radius * 2);
+        // this.pg.noErase();
+        // this.pg.pop();
     }
 
     draw() {
@@ -58,7 +83,9 @@ export class Moustache {
         //clamp the rotation to a smaller range
         noiseValue = constrain(noiseValue, -0.3, 0.3);
         rotate(noiseValue);
-        image(this.img, 0, 0, this.w, this.w * (this.img.height / this.img.width));
+        // image(this.img, 0, 0, this.w, this.w * (this.img.height / this.img.width));
+        // draw buffer
+        image(this.pg, 0, 0);
         pop();
         // draw moustache buffer on top of the king image
     }
@@ -122,27 +149,29 @@ export class Moustache {
     }
 
     // Check whether the moustache buffer is fully erased (all transparent)
-    // sampleStep: number of pixels to skip per axis for faster checks (>=1)
-    // alphaThreshold: alpha value (0-255) above which a pixel counts as non-transparent
+    // detect 95% transparency
     isFullyErased(sampleStep = 6, alphaThreshold = 5) {
-        // If no buffer or it's empty, consider it erased
-        if (!this.pg) return true;
 
-        // Use pg.get(x,y) which handles pixel density internally.
-        const w = this.pg.width;
-        const h = this.pg.height;
+        const imgData = this.pg.get();
+        imgData.loadPixels();
+        let totalPixels = 0;
+        let transparentPixels = 0;
 
-        // Small optimization: if the buffer was never drawn to (no pixels), treat as erased
-        // But since we draw at construction, we inspect pixels.
-        for (let y = 0; y < h; y += sampleStep) {
-            for (let x = 0; x < w; x += sampleStep) {
-                const c = this.pg.get(x, y); // returns [r,g,b,a]
-                if (c && c[3] > alphaThreshold) {
-                    return false; // found an opaque (or semi-opaque) pixel
+        // count transparent pixels
+        for (let y = 0; y < imgData.height; y += sampleStep) {
+            for (let x = 0; x < imgData.width; x += sampleStep) {
+                const index = (y * imgData.width + x) * 4;
+                const alpha = imgData.pixels[index + 3];
+                totalPixels++;
+                if (alpha <= alphaThreshold) {
+                    transparentPixels++;
                 }
             }
         }
-
-        return true;
+        if ((transparentPixels / totalPixels) >= 0.95) {
+            return true;
+        }
+        return false
+        
     }
 }

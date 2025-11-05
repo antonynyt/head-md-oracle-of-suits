@@ -27,17 +27,17 @@ function preload() {
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    
+
     videoElement = createCapture(VIDEO, { flipped: selfieMode });
     videoElement.size(640, 480);
     videoElement.hide();
-    
+
     colorMode(HSB, 360, 100, 100, 100);
-    
+
     hands = new Hands({
         locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
     });
-    
+
     hands.setOptions({
         maxNumHands: 1,
         modelComplexity: 1,
@@ -45,9 +45,9 @@ function setup() {
         minTrackingConfidence: 0.1,
         selfieMode: selfieMode,
     });
-    
+
     hands.onResults(onHandsResults);
-    
+
     cam = new Camera(videoElement.elt, {
         onFrame: async () => {
             await hands.send({ image: videoElement.elt });
@@ -55,7 +55,7 @@ function setup() {
         width: width,
         height: height
     });
-    
+
     cam.start();
     gesture = new GestureClassifier();
     cursor = new Cursor();
@@ -85,7 +85,7 @@ function draw() {
     }
     image(pattern, 0, 0, patternWidth, patternHeight);
     noTint();
-    
+
     imageMode(CENTER);
     let imgWidth = king.width;
     let imgHeight = king.height;
@@ -102,10 +102,17 @@ function draw() {
         imgHeight = imgHeight * scale;
     }
 
-    image(king, width / 2, height - imgHeight / 2 + 20, imgWidth, imgHeight);
-    
+    image(king, width / 2, height - imgHeight / 2 + 100, imgWidth, imgHeight);
+
     landmarks();
-    
+
+    if (moustache.isFullyErased()) {
+        // If the moustache is fully erased, trigger a "shaving" event
+        isFullyErased = true;
+        console.log("Moustache fully erased!");
+        window.location.href = "recompose.html";
+    }
+
     moustache.draw();
     cursor.draw();
 }
@@ -115,7 +122,7 @@ function landmarks() {
         for (let i = 0; i < detections.multiHandLandmarks.length; i++) {
             const landmarks = detections.multiHandLandmarks[i];
             const closeness = gesture.classify(landmarks);
-            
+
             let targetX = 0;
             let targetY = 0;
             for (let j = 0; j < landmarks.length; j++) {
@@ -124,10 +131,10 @@ function landmarks() {
             }
             targetX /= landmarks.length;
             targetY /= landmarks.length;
-            
+
             const videoAspect = 640 / 480;
             const canvasAspect = width / height;
-            
+
             let mappedX, mappedY;
             if (canvasAspect > videoAspect) {
                 const scaledHeight = width / videoAspect;
@@ -140,21 +147,17 @@ function landmarks() {
                 mappedX = targetX * scaledWidth + offsetX;
                 mappedY = targetY * height;
             }
-            
+
             cursor.update(mappedX, mappedY);
-            
+
             if (closeness.state === 'closed') {
                 cursor.setRadius(50);
                 // erase moustache under the cursor (use canvas coords)
                 moustache.eraseAt(mappedX, mappedY, cursor.radius || 50);
-                if (moustache.isFullyErased()) {
-                    // If the moustache is fully erased, trigger a "shaving" event
-                    isFullyErased = true;
-                }
             } else {
                 cursor.setRadius(20);
             }
-            
+
             fill(0, 0, 0);
             textSize(16);
             textAlign(LEFT, TOP);
