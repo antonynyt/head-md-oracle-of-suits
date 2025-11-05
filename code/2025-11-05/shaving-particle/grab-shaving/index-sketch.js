@@ -157,8 +157,9 @@ function landmarks() {
 
             if (closeness.state === 'closed') {
                 handCursor.close();
-                // erase moustache under the cursor (use canvas coords)
-                moustache.eraseAt(mappedX, mappedY, handCursor.radius || 50);
+                // erase moustache at the top of the cursor image (use canvas coords)
+                const cursorTop = handCursor.getTop();
+                moustache.eraseAt(cursorTop.x, cursorTop.y, 50);
             } else {
                 handCursor.open();
             }

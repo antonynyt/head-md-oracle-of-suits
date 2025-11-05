@@ -45,4 +45,9 @@ export class Cursor {
         imageMode(CENTER);
         image(this.currentImg, this.x, this.y, this.currentImg.width * 0.3, this.currentImg.height * 0.3);
     }
+
+    getTop() {
+        const drawHeight = this.currentImg.height * 0.3;
+        return { x: this.x, y: this.y - drawHeight / 2 };
+    }
 }
