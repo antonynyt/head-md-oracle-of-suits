@@ -47,7 +47,7 @@ function setup() {
     });
 
     hands.setOptions({
-        maxNumHands: 1,
+        maxNumHands: 3,
         modelComplexity: 1,
         minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.1,
@@ -123,51 +123,59 @@ function draw() {
 }
 
 function landmarks() {
-    if (detections && detections.multiHandLandmarks) {
-        for (let i = 0; i < detections.multiHandLandmarks.length; i++) {
-            const landmarks = detections.multiHandLandmarks[i];
-            const closeness = gesture.classify(landmarks);
+    if (detections && detections.multiHandLandmarks && detections.multiHandLandmarks.length) {
+        const handsLM = detections.multiHandLandmarks;
 
-            let targetX = 0;
-            let targetY = 0;
-            for (let j = 0; j < landmarks.length; j++) {
-                targetX += landmarks[j].x;
-                targetY += landmarks[j].y;
+        // find closest hand by average z (more negative = closer)
+        let closestIndex = 0;
+        let closestDepth = Infinity;
+        for (let i = 0; i < handsLM.length; i++) {
+            const lm = handsLM[i];
+            let sumZ = 0;
+            for (let j = 0; j < lm.length; j++) sumZ += lm[j].z;
+            const avgZ = sumZ / lm.length;
+            if (avgZ < closestDepth) {
+                closestDepth = avgZ;
+                closestIndex = i;
             }
-            targetX /= landmarks.length;
-            targetY /= landmarks.length;
+        }
 
-            const videoAspect = 640 / 480;
-            const canvasAspect = width / height;
+        const landmarks = handsLM[closestIndex];
+        const closeness = gesture.classify(landmarks);
 
-            let mappedX, mappedY;
-            if (canvasAspect > videoAspect) {
-                const scaledHeight = width / videoAspect;
-                const offsetY = (height - scaledHeight) / 2;
-                mappedX = targetX * width;
-                mappedY = targetY * scaledHeight + offsetY;
-            } else {
-                const scaledWidth = height * videoAspect;
-                const offsetX = (width - scaledWidth) / 2;
-                mappedX = targetX * scaledWidth + offsetX;
-                mappedY = targetY * height;
-            }
+        let targetX = 0;
+        let targetY = 0;
+        for (let j = 0; j < landmarks.length; j++) {
+            targetX += landmarks[j].x;
+            targetY += landmarks[j].y;
+        }
+        targetX /= landmarks.length;
+        targetY /= landmarks.length;
 
-            handCursor.update(mappedX, mappedY);
+        const videoAspect = 640 / 480;
+        const canvasAspect = width / height;
 
-            if (closeness.state === 'closed') {
-                handCursor.close();
-                // erase moustache at the top of the cursor image (use canvas coords)
-                const cursorTop = handCursor.getTop();
-                moustache.eraseAt(cursorTop.x, cursorTop.y, 50);
-            } else {
-                handCursor.open();
-            }
+        let mappedX, mappedY;
+        if (canvasAspect > videoAspect) {
+            const scaledHeight = width / videoAspect;
+            const offsetY = (height - scaledHeight) / 2;
+            mappedX = targetX * width;
+            mappedY = targetY * scaledHeight + offsetY;
+        } else {
+            const scaledWidth = height * videoAspect;
+            const offsetX = (width - scaledWidth) / 2;
+            mappedX = targetX * scaledWidth + offsetX;
+            mappedY = targetY * height;
+        }
 
-            fill(0, 0, 0);
-            textSize(16);
-            textAlign(LEFT, TOP);
-            text(`Closeness: ${closeness.closure.toFixed(2)}`, 10, 10);
+        handCursor.update(mappedX, mappedY);
+
+        if (closeness.state === 'closed') {
+            handCursor.close();
+            const cursorTop = handCursor.getTop();
+            moustache.eraseAt(cursorTop.x, cursorTop.y, 50);
+        } else {
+            handCursor.open();
         }
     }
 }
