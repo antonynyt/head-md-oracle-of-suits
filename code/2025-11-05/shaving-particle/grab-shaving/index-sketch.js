@@ -10,19 +10,27 @@ let detections = null;
 let cam;
 let selfieMode = true;
 let gesture;
-let cursor;
+let handCursor;
 let moustache;
-let isFullyErased = false;
 
 //images
 let king;
 let moustacheImg = [];
 let pattern;
+let handCursorImgs = {};
+
+//sound
+let shavingSound;
 
 function preload() {
     king = loadImage("./assets/img/king.png");
     moustacheImg.push(loadImage("./assets/img/moustache-0.png"));
     pattern = loadImage("./assets/img/pattern.png");
+    handCursorImgs.open = loadImage("./assets/img/hand-open.png");
+    handCursorImgs.closed = loadImage("./assets/img/hand-closed.png");
+
+    //load sound
+    shavingSound = loadSound("./assets/sounds/rasor.mp3");
 }
 
 function setup() {
@@ -58,7 +66,7 @@ function setup() {
 
     cam.start();
     gesture = new GestureClassifier();
-    cursor = new Cursor();
+    handCursor = new Cursor(handCursorImgs, shavingSound);
     moustache = new Moustache(width / 2 - 10, height * 0.62, 500, moustacheImg[0]);
 }
 
@@ -84,7 +92,6 @@ function draw() {
         patternWidth = patternWidth * scale;
     }
     image(pattern, 0, 0, patternWidth, patternHeight);
-    noTint();
 
     imageMode(CENTER);
     let imgWidth = king.width;
@@ -108,13 +115,11 @@ function draw() {
 
     if (moustache.isFullyErased()) {
         // If the moustache is fully erased, trigger a "shaving" event
-        isFullyErased = true;
-        console.log("Moustache fully erased!");
         window.location.href = "recompose.html";
     }
 
     moustache.draw();
-    cursor.draw();
+    handCursor.draw();
 }
 
 function landmarks() {
@@ -148,14 +153,14 @@ function landmarks() {
                 mappedY = targetY * height;
             }
 
-            cursor.update(mappedX, mappedY);
+            handCursor.update(mappedX, mappedY);
 
             if (closeness.state === 'closed') {
-                cursor.setRadius(50);
+                handCursor.close();
                 // erase moustache under the cursor (use canvas coords)
-                moustache.eraseAt(mappedX, mappedY, cursor.radius || 50);
+                moustache.eraseAt(mappedX, mappedY, handCursor.radius || 50);
             } else {
-                cursor.setRadius(20);
+                handCursor.open();
             }
 
             fill(0, 0, 0);

@@ -27,27 +27,6 @@ export class Moustache {
 
         // draw initial moustache into the buffer
         this.pg.image(this.img, this.w / 2, this.height / 2, this.w, this.height);
-
-
-
-
-
-
-        // offscreen buffer same size as canvas
-        // this.pg = createGraphics(width, height);
-        // this.pg.clear();
-        // this.pg.imageMode(CENTER);
-        // // draw initial moustache into the buffer
-        // if (this.img) {
-        //     const h = this.img.height;
-        //     const ratio = h > 0 ? (this.img.width / h) : 1;
-        //     this.pg.image(this.img, this.x, this.y, this.w, this.w * (h / this.img.width));
-        // } else {
-        //     this.pg.noStroke();
-        //     this.pg.fill(30, 80, 40);
-        //     this.pg.ellipse(this.x - this.w * 0.25, this.y, this.w * 0.5, this.w * 0.25);
-        //     this.pg.ellipse(this.x + this.w * 0.25, this.y, this.w * 0.5, this.w * 0.25);
-        // }
     }
 
     // erase a circular area on the moustache buffer (make it transparent)
@@ -62,15 +41,6 @@ export class Moustache {
         this.pg.ellipse(offsetX, offsetY, radius * 2, radius * 2);
         this.pg.noErase();
         this.pg.pop();
-
-
-        // if (!this.pg) return;
-        // this.pg.push();
-        // this.pg.erase();
-        // this.pg.noStroke();
-        // this.pg.ellipse(px, py, radius * 2, radius * 2);
-        // this.pg.noErase();
-        // this.pg.pop();
     }
 
     draw() {

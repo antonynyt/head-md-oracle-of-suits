@@ -1,14 +1,16 @@
 export class Cursor {
-    constructor() {
+    constructor(imgs, sound) {
         this.x = -100;
         this.y = -100;
-        this.radius = 50;
         this.baseAlpha = 50;
         this.alpha = this.baseAlpha;
         this.lerpAmount = 0.95;
         this.fadeTime = 500;
         this.fadeDuration = 3000;
         this.lastMoveTime = 0;
+        this.imgSrc = imgs;
+        this.currentImg = this.imgSrc.open;
+        this.sound = sound;
     }
 
     update(targetX, targetY) {
@@ -29,13 +31,18 @@ export class Cursor {
         }
     }
 
-    setRadius(radius) {
-        this.radius = radius;
+    open() {
+        this.currentImg = this.imgSrc.open;
+        this.sound.stop();
+    }
+
+    close() {
+        this.currentImg = this.imgSrc.closed;
+        this.sound.play();
     }
 
     draw() {
-        noStroke();
-        fill(0, 0, 0, this.alpha);
-        rect(this.x - this.radius, this.y - this.radius / 2, this.radius * 2, this.radius / 2);
+        imageMode(CENTER);
+        image(this.currentImg, this.x, this.y, this.currentImg.width * 0.3, this.currentImg.height * 0.3);
     }
 }
