@@ -1,5 +1,5 @@
 import { GestureClassifier } from "./class/Gesture.js";
-import { Cursor } from "./class/Cursor.js";
+import { HandCursor } from "./class/HandCursor.js";
 import { Moustache } from "./class/Moustache.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
@@ -66,7 +66,7 @@ function setup() {
 
     cam.start();
     gesture = new GestureClassifier();
-    handCursor = new Cursor(handCursorImgs, shavingSound);
+    handCursor = new HandCursor(handCursorImgs, shavingSound);
     moustache = new Moustache(width / 2 - 10, height * 0.62, 500, moustacheImg[0]);
 }
 
@@ -168,14 +168,14 @@ function landmarks() {
             mappedY = targetY * height;
         }
 
-        handCursor.update(mappedX, mappedY);
+        handCursor.move(mappedX, mappedY);
 
         if (closeness.state === 'closed') {
-            handCursor.close();
+            handCursor.showClosedHand();
             const cursorTop = handCursor.getTop();
             moustache.eraseAt(cursorTop.x, cursorTop.y, 50);
         } else {
-            handCursor.open();
+            handCursor.showOpenHand();
         }
     }
 }

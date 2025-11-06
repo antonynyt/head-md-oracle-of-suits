@@ -25,7 +25,7 @@ function windowResized() {
 
 function draw() {
     background(227, 84, 40);
-    
+
     // draw patterned background
     let patternWidth = pattern.width;
     let patternHeight = pattern.height;
