@@ -1,15 +1,16 @@
-import { GestureClassifier } from "./class/Gesture.js";
+import { GestureClassifier } from "./class/GestureClassifier.js";
 import { HandCursor } from "./class/HandCursor.js";
 import { Moustache } from "./class/Moustache.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
+import { handleLandmarks } from "./utils/HandleLandmarks.js";
 
 let videoElement;
 let hands;
 let detections = null;
 let cam;
 let selfieMode = true;
-let gesture;
+let gestureClassifier;
 let handCursor;
 let moustache;
 
@@ -65,7 +66,7 @@ function setup() {
     });
 
     cam.start();
-    gesture = new GestureClassifier();
+    gestureClassifier = new GestureClassifier();
     handCursor = new HandCursor(handCursorImgs, shavingSound);
     moustache = new Moustache(width / 2 - 10, height * 0.62, 500, moustacheImg[0]);
 }
@@ -110,74 +111,14 @@ function draw() {
     }
 
     image(king, width / 2, height - imgHeight / 2 + 100, imgWidth, imgHeight);
-
-    landmarks();
+    handleLandmarks(detections, gestureClassifier, handCursor, moustache, width, height, videoElement.width, videoElement.height);
 
     if (moustache.isFullyErased()) {
-        // If the moustache is fully erased, trigger a "shaving" event
         window.location.href = "recompose.html";
     }
 
     moustache.draw();
     handCursor.draw();
-}
-
-function landmarks() {
-    if (detections && detections.multiHandLandmarks && detections.multiHandLandmarks.length) {
-        const handsLM = detections.multiHandLandmarks;
-
-        // find closest hand by average z (more negative = closer)
-        let closestIndex = 0;
-        let closestDepth = Infinity;
-        for (let i = 0; i < handsLM.length; i++) {
-            const lm = handsLM[i];
-            let sumZ = 0;
-            for (let j = 0; j < lm.length; j++) sumZ += lm[j].z;
-            const avgZ = sumZ / lm.length;
-            if (avgZ < closestDepth) {
-                closestDepth = avgZ;
-                closestIndex = i;
-            }
-        }
-
-        const landmarks = handsLM[closestIndex];
-        const closeness = gesture.classify(landmarks);
-
-        let targetX = 0;
-        let targetY = 0;
-        for (let j = 0; j < landmarks.length; j++) {
-            targetX += landmarks[j].x;
-            targetY += landmarks[j].y;
-        }
-        targetX /= landmarks.length;
-        targetY /= landmarks.length;
-
-        const videoAspect = 640 / 480;
-        const canvasAspect = width / height;
-
-        let mappedX, mappedY;
-        if (canvasAspect > videoAspect) {
-            const scaledHeight = width / videoAspect;
-            const offsetY = (height - scaledHeight) / 2;
-            mappedX = targetX * width;
-            mappedY = targetY * scaledHeight + offsetY;
-        } else {
-            const scaledWidth = height * videoAspect;
-            const offsetX = (width - scaledWidth) / 2;
-            mappedX = targetX * scaledWidth + offsetX;
-            mappedY = targetY * height;
-        }
-
-        handCursor.move(mappedX, mappedY);
-
-        if (closeness.state === 'closed') {
-            handCursor.showClosedHand();
-            const cursorTop = handCursor.getTop();
-            moustache.eraseAt(cursorTop.x, cursorTop.y, 50);
-        } else {
-            handCursor.showOpenHand();
-        }
-    }
 }
 
 window.setup = setup;
