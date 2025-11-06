@@ -1,6 +1,7 @@
 import { GestureClassifier } from "./class/GestureClassifier.js";
 import { HandCursor } from "./class/HandCursor.js";
 import { Moustache } from "./class/Moustache.js";
+import { Character } from "./class/Character.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
 import { handleLandmarks } from "./utils/HandleLandmarks.js";
@@ -13,6 +14,7 @@ let selfieMode = true;
 let gestureClassifier;
 let handCursor;
 let moustache;
+let kingCharacter;
 
 //images
 let king;
@@ -68,7 +70,12 @@ function setup() {
     cam.start();
     gestureClassifier = new GestureClassifier();
     handCursor = new HandCursor(handCursorImgs, shavingSound);
-    moustache = new Moustache(width / 2 - 10, height * 0.62, 500, moustacheImg[0]);
+
+    // create character and place moustache at its anchor
+    kingCharacter = new Character(king, { anchor: { x: 0.48, y: 0.5 }, offsetY: 40 });
+    const moustachePos = kingCharacter.getMoustachePosition(width, height);
+    // keep moustache width as before (500) or tune to image size if needed
+    moustache = new Moustache(moustachePos.x, moustachePos.y, 500, moustacheImg[0]);
 }
 
 function windowResized() {
@@ -94,30 +101,14 @@ function draw() {
     }
     image(pattern, 0, 0, patternWidth, patternHeight);
 
-    imageMode(CENTER);
-    let imgWidth = king.width;
-    let imgHeight = king.height;
-    const maxImgHeight = height * 0.8;
-    const maxImgWidth = width;
-    if (imgHeight > maxImgHeight) {
-        const scale = maxImgHeight / imgHeight;
-        imgHeight = maxImgHeight;
-        imgWidth = imgWidth * scale;
-    }
-    if (imgWidth > maxImgWidth) {
-        const scale = maxImgWidth / imgWidth;
-        imgWidth = maxImgWidth;
-        imgHeight = imgHeight * scale;
-    }
-
-    image(king, width / 2, height - imgHeight / 2 + 100, imgWidth, imgHeight);
+    kingCharacter.draw(width, height);
     handleLandmarks(detections, gestureClassifier, handCursor, moustache, width, height, videoElement.width, videoElement.height);
 
     if (moustache.isFullyErased()) {
         window.location.href = "recompose.html";
     }
 
-    moustache.draw();
+    moustache.draw(true);
     handCursor.draw();
 }
 

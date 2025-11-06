@@ -43,21 +43,19 @@ export class Moustache {
         this.pg.pop();
     }
 
-    draw() {
+    draw(rotateMoustache = false) {
         imageMode(CENTER);
         push();
         translate(this.x, this.y);
-        //rotate(sin(frameCount * 0.05) * 0.1);
-        let rotationSpeed = 0.02;
-        let noiseValue = noise(frameCount * rotationSpeed) * 1.0 - 0.5;
-        //clamp the rotation to a smaller range
-        noiseValue = constrain(noiseValue, -0.3, 0.3);
-        rotate(noiseValue);
-        // image(this.img, 0, 0, this.w, this.w * (this.img.height / this.img.width));
-        // draw buffer
+        if (rotateMoustache) {
+            let rotationSpeed = 0.02;
+            let noiseValue = noise(frameCount * rotationSpeed) * 1.0 - 0.5;
+            //clamp the rotation to a smaller range
+            noiseValue = constrain(noiseValue, -0.2, 0.2);
+            rotate(noiseValue);
+        }
         image(this.pg, 0, 0);
         pop();
-        // draw moustache buffer on top of the king image
     }
 
     float() {
@@ -138,10 +136,10 @@ export class Moustache {
                 }
             }
         }
-        if ((transparentPixels / totalPixels) >= 0.95) {
+        if ((transparentPixels / totalPixels) >= 0.98) {
             return true;
         }
         return false
-        
+
     }
 }

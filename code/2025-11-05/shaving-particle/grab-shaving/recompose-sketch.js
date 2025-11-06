@@ -58,7 +58,7 @@ function draw() {
     }
     endShape(CLOSE);
 
-    moustache.draw();
+    moustache.draw(false);
 }
 
 window.setup = setup;
