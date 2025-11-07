@@ -192,7 +192,7 @@ Motivation: 7/10
 
 Group is going well. And we all presented our project to each other. I feel like some people got their hopes a bit crushed by the user tests. It was like a hard back to reality after putting effort and time on their concepts.
 
-I also understand how it's hard to give good feedback that make people progress. Giving good advices and not just critiques. Understand first, advise next. Imagine doing this for 10 people and they are all different profiles. A person that achieve to understand and master that level of communication is a .
+I also understand how it's hard to give good feedback that make people progress. Giving good advices and not just critiques. Understand first, advise next. Imagine doing this for 10 people and they are all different profiles. A person that achieve to understand and master that level of communication is a genius.
 
 We got [feedback](./2025-11-06.md) from users. We need to do do do the da da da. When did i become lazy?
 
