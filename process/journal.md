@@ -1,3 +1,5 @@
+# Welcome to my echo chamber
+
 ## Takeaway from the brief (2025-09-23)
 
 designing embodied, playful, and accessible interactive experiences that tell the stories behind playing card suits for the Swiss Museum of Games.
