@@ -186,3 +186,16 @@ Ali made some [razors shapes](./images/rasor-2025-11-05.jpg) at the wood worksho
 Douglas helped a lot with understanding P5JS and the canvas concept. This is really a new world and I should take the time to read [NatureOfCode](https://natureofcode.com/)  and learn trigonometry (again).
 
 PS: I read again some of my first personal logs. I already level up on some concepts/thoughts. Since i choose to make it public, hope Im not Oversharing. Infosec me would not agree with this (OSINT exists). This log is a security vulnerability.
+
+## first présentation (2025-11-06)
+Motivation: 7/10
+
+Group is going well. And we all presented our project to each other. I feel like some people got their hopes a bit crushed by the user tests. It was like a hard back to reality after putting effort and time on their concepts.
+
+I also understand how it's hard to give good feedback that make people progress. Giving good advices and not just critiques. Understand first, advise next. Imagine doing this for 10 people and they are all different profiles. A person that achieve to understand and master that level of communication is a .
+
+We got [feedback](./2025-11-06.md) from users. We need to do do do the da da da. When did i become lazy?
+
+PS: A wise green hobbit named yoda once said that to become a media design master “You must unlearn what you have learned.” (not the hard skills) and “Train yourself to let go of everything you fear to lose.” pas facile.
+
+"How to pitch" is still to improve and in english.
