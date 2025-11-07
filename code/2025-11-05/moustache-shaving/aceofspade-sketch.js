@@ -14,10 +14,10 @@ let selfieMode = true;
 let gestureClassifier;
 let handCursor;
 let moustache;
-let kingCharacter;
+let aceofspadeCharacter;
 
 //images
-let king;
+let aceofspadeImg;
 let moustacheImg = [];
 let pattern;
 let handCursorImgs = {};
@@ -26,8 +26,8 @@ let handCursorImgs = {};
 let shavingSound;
 
 function preload() {
-    king = loadImage("./assets/img/king.png");
-    moustacheImg.push(loadImage("./assets/img/moustache-0.png"));
+    aceofspadeImg = loadImage("./assets/img/aceofspade.png");
+    moustacheImg.push(loadImage("./assets/img/moustache-1.png"));
     pattern = loadImage("./assets/img/pattern.png");
     handCursorImgs.open = loadImage("./assets/img/hand-open.png");
     handCursorImgs.closed = loadImage("./assets/img/hand-closed.png");
@@ -72,10 +72,14 @@ function setup() {
     handCursor = new HandCursor(handCursorImgs, shavingSound);
 
     // create character and place moustache at its anchor
-    kingCharacter = new Character(king, { anchor: { x: 0.48, y: 0.5 }, offsetY: 40 });
-    const moustachePos = kingCharacter.getMoustachePosition(width, height);
-    // keep moustache width as before (500) or tune to image size if needed
-    moustache = new Moustache(moustachePos.x, moustachePos.y, 500, moustacheImg[0]);
+    aceofspadeCharacter = new Character(aceofspadeImg, {
+        maxHeightRatio: 0.5,
+        maxWidthRatio: 0.5,
+        anchor: { x: 0.5, y: 0.5 }, offsetY: 0
+    });
+
+    const moustachePos = aceofspadeCharacter.getMoustachePosition(width, height);
+    moustache = new Moustache(moustachePos.x, moustachePos.y, 800, moustacheImg[0]);
 }
 
 function windowResized() {
@@ -101,14 +105,10 @@ function draw() {
     }
     image(pattern, 0, 0, patternWidth, patternHeight);
 
-    kingCharacter.draw(width, height);
+    aceofspadeCharacter.draw(width, height);
     handleLandmarks(detections, gestureClassifier, handCursor, moustache, width, height, videoElement.width, videoElement.height);
 
-    if (moustache.isFullyErased()) {
-        window.location.href = "recompose.html";
-    }
-
-    moustache.draw(true);
+    moustache.draw(false);
     handCursor.draw();
 }
 

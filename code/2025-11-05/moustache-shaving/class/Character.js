@@ -6,7 +6,7 @@ export class Character {
         this.maxHeightRatio = options.maxHeightRatio || 0.8;
         this.maxWidthRatio = options.maxWidthRatio || 1.0;
         // vertical offset applied when positioning the image's center (same as your previous +100)
-        this.offsetY = options.offsetY || 100;
+        this.offsetY = options.offsetY || 0;
     }
 
     // compute scaled width/height for current canvas
@@ -33,7 +33,7 @@ export class Character {
     getDrawParams(canvasW, canvasH) {
         const { w, h } = this.getSize(canvasW, canvasH);
         const x = canvasW / 2;
-        const y = canvasH - h / 2 + this.offsetY;
+        const y = canvasH / 2 + this.offsetY;
         return { x, y, w, h };
     }
 
