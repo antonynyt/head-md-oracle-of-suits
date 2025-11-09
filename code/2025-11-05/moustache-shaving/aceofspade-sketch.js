@@ -79,7 +79,7 @@ function setup() {
     });
 
     const moustachePos = aceofspadeCharacter.getMoustachePosition(width, height);
-    moustache = new Moustache(moustachePos.x, moustachePos.y, 800, moustacheImg[0]);
+    moustache = new Moustache(moustachePos.x, moustachePos.y, 400, moustacheImg[0]);
 }
 
 function windowResized() {

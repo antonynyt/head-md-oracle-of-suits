@@ -1,47 +1,54 @@
+// Particle System Simulation with Random Rotation
+// The Nature of Code
+// The Coding Train / Daniel Shiffman
+
 export class Particle {
-    constructor(x, y, radius) {
-        this.x = x;
-        this.y = y;
-        this.radius = radius; // used as a base size
-        this.alpha = 255;
+  constructor(x, y) {
+    this.pos = createVector(x, y);
+    this.vel = p5.Vector.random2D();
+    this.vel.mult(random(0.5, 2));
+    this.acc = createVector(0, 0);
+    this.w = 20;
+    this.h = 1;
+    this.lifetime = 255;
 
-        // physics
-        this.vx = random(-0.5, 0.5);
-        this.vy = random(1, 3);
-        this.gravity = 0.12;
-        this.friction = 0.995;
+    // NEW: Add rotation and spin
+    this.angle = random(TWO_PI);
+    this.angularVelocity = random(-0.1, 0.1); // random spin speed
+  }
 
-        // visual for a small "line" particle
-        this.length = random(6, 18);
-        this.thickness = random(1, 3);
-        this.angle = random(TWO_PI);
-        this.color = 0; // black by default, change if needed
-    }
+  finished() {
+    return this.lifetime < 0;
+  }
 
-    update() {
-        // physics
-        this.vy += this.gravity;
-        this.vx *= this.friction;
-        this.x += this.vx;
-        this.y += this.vy;
+  applyForce(force) {
+    this.acc.add(force);
+  }
 
-        // rotate slowly
-        this.angle += this.vx * 0.05;
+  update() {
+    this.vel.add(this.acc);
+    this.pos.add(this.vel);
+    this.acc.set(0, 0);
 
-        // fade out
-        this.alpha -= 4;
-    }
+    this.lifetime -= 5;
 
-    isAlive() {
-        return this.alpha > 5 && this.y < height + 50;
-    }
+    // Update rotation
+    this.angle += this.angularVelocity;
+  }
 
-    draw() {
-        stroke(this.color, this.alpha);
-        strokeWeight(this.thickness);
-        // draw a short line with rotation
-        const dx = cos(this.angle) * this.length;
-        const dy = sin(this.angle) * this.length;
-        line(this.x - dx * 0.5, this.y - dy * 0.5, this.x + dx * 0.5, this.y + dy * 0.5);
-    }
+  show() {
+    push();
+    translate(this.pos.x, this.pos.y);
+    rotate(this.angle);
+
+    //stroke color red
+
+
+    const color = 150;
+    fill(color, this.lifetime);
+    rectMode(CENTER); // so rotation looks centered
+    rect(0, 0, this.w, this.h);
+
+    pop();
+  }
 }

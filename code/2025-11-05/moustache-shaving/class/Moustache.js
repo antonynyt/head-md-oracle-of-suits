@@ -1,3 +1,5 @@
+import { Particle } from "./Particle.js";
+
 export class Moustache {
     constructor(x, y, w, img) {
         this.x = x;
@@ -27,6 +29,9 @@ export class Moustache {
 
         // draw initial moustache into the buffer
         this.pg.image(this.img, this.w / 2, this.height / 2, this.w, this.height);
+
+        this.particles = [];
+        this.maxParticles = 200;
     }
 
     // erase a circular area on the moustache buffer (make it transparent)
@@ -35,12 +40,18 @@ export class Moustache {
         const offsetX = px - (this.x - this.w / 2);
         const offsetY = py - (this.y - this.height / 2);
 
+        const shouldEmit = this.regionHasInk(offsetX, offsetY, radius);
+
         this.pg.push();
         this.pg.erase();
         this.pg.noStroke();
         this.pg.ellipse(offsetX, offsetY, radius * 2, radius * 2);
         this.pg.noErase();
         this.pg.pop();
+
+        // if (shouldEmit) {
+        //     this.spawnParticles(px, py, radius);
+        // }
     }
 
     draw(rotateMoustache = false) {
@@ -56,68 +67,11 @@ export class Moustache {
         }
         image(this.pg, 0, 0);
         pop();
-    }
-
-    float() {
-        // Animate position with Perlin noise
-        const time = frameCount * 0.005; // Slower time increment
-        //this.x += (noise(time) - 0.5) * 0.3; // Small, slow jiggle
-        //this.y += (noise(time + 1000) - 0.5) * 0.3; // Small, slow jiggle
-
-        // Physics update
-        this.vx += this.ax;
-        this.vy += this.ay;
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vx *= 0.85; // less damping for faster movement
-        this.vy *= 0.85;
-        this.ax = 0;
-        this.ay = 0;
-
-        // Hard clamp to ensure it never goes out of bounds
-        const halfWidth = this.width / 2;
-        const halfHeight = this.height / 2;
-        this.x = constrain(this.x, halfWidth, width - halfWidth);
-        this.y = constrain(this.y, halfHeight, height - halfHeight);
-    }
-
-    jumpTo(x, y) {
-        // make the moustache move to new position with lerp
-        this.x = lerp(this.x, x, 0.1);
-        this.y = lerp(this.y, y, 0.1);
-    }
-
-    isTouching(cursorX, cursorY, cursorRadius) {
-        // Rectangle collision detection with circle
-        const halfWidth = this.width / 2;
-        const halfHeight = this.height / 2;
-
-        // Find closest point on rectangle to cursor center
-        const closestX = constrain(cursorX, this.x - halfWidth, this.x + halfWidth);
-        const closestY = constrain(cursorY, this.y - halfHeight, this.y + halfHeight);
-
-        // Calculate distance from cursor center to closest point
-        const distance = dist(cursorX, cursorY, closestX, closestY);
-
-        return distance < cursorRadius;
-    }
-
-    jumpAway(cursorX, cursorY) {
-        // Calculate direction away from cursor
-        const dx = this.x - cursorX;
-        const dy = this.y - cursorY;
-        const distance = dist(this.x, this.y, cursorX, cursorY);
-
-        if (distance > 0) {
-            // Immediate velocity impulse away from cursor (no lerp)
-            const jumpSpeed = 12; // tune this value for stronger/weaker jump
-            this.vx = (dx / distance) * jumpSpeed;
-            this.vy = (dy / distance) * jumpSpeed;
-        }
+        // this.updateParticles();
     }
 
     // Check whether the moustache buffer is fully erased (all transparent)
-    // detect 95% transparency
+    // detect 99% transparency
     isFullyErased(sampleStep = 6, alphaThreshold = 5) {
 
         const imgData = this.pg.get();
@@ -136,10 +90,56 @@ export class Moustache {
                 }
             }
         }
-        if ((transparentPixels / totalPixels) >= 0.98) {
+        if ((transparentPixels / totalPixels) >= 0.99) {
             return true;
         }
         return false
 
+    }
+
+    spawnParticles(px, py, radius) {
+        for (let i = 0; i < 2; i++) {
+            if (this.particles.length >= this.maxParticles) {
+                this.particles.shift();
+            }
+            const jitterX = random(-radius * 0.3, radius * 0.3);
+            const jitterY = random(-radius * 0.3, radius * 0.3);
+            const particle = new Particle(px + jitterX, py + jitterY);
+            particle.applyForce(createVector(random(-0.05, 0.05), random(-0.2, -0.05)));
+            this.particles.push(particle);
+        }
+    }
+
+    updateParticles() {
+        const gravity = createVector(0, 0.12);
+        for (const particle of this.particles) {
+            particle.applyForce(gravity);
+            particle.update();
+            particle.show();
+        }
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            if (this.particles[i].finished()) {
+                this.particles.splice(i, 1);
+            }
+        }
+    }
+
+    regionHasInk(offsetX, offsetY, radius) {
+        this.pg.loadPixels();
+        const rSquared = radius * radius;
+        const step = Math.max(1, Math.floor(radius / 3));
+        for (let dy = -radius; dy <= radius; dy += step) {
+            for (let dx = -radius; dx <= radius; dx += step) {
+                if (dx * dx + dy * dy > rSquared) continue;
+                const sx = Math.floor(offsetX + dx);
+                const sy = Math.floor(offsetY + dy);
+                if (sx < 0 || sy < 0 || sx >= this.pg.width || sy >= this.pg.height) continue;
+                const index = (sy * this.pg.width + sx) * 4 + 3;
+                if (this.pg.pixels[index] > 10) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
