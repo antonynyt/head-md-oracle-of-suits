@@ -17,6 +17,9 @@ export function handleLandmarks(detections, gesture, handCursor, moustache, canv
         }
     }
 
+    //ignore far hands
+    if (closestDepth > -0.03) return;
+
     const landmarks = handsLM[closestIndex];
     const closeness = gesture.classify(landmarks);
 
