@@ -47,7 +47,7 @@ export class KingScene extends BaseScene {
 
         if (this._areAllTargetsCleared()) {
             this.shared.handCursor.showOpenHand();
-            this.shared.switchScene("ace");
+            this.shared.switchScene("recompose");
             return;
         }
 

@@ -137,6 +137,7 @@ function loadAssets() {
 	const handOpen = loadImage("./assets/img/hand-open.png");
 	const handClosed = loadImage("./assets/img/hand-closed.png");
 	const shaving = loadSound("./assets/sounds/rasor.mp3");
+	const recomposeVideo = "./assets/videos/recomposing.webm";
 
 	return {
 		images: {
@@ -151,6 +152,9 @@ function loadAssets() {
 		},
 		sounds: {
 			shaving
+		},
+		videos: {
+			recompose: recomposeVideo
 		}
 	};
 }

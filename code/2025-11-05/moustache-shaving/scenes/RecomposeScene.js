@@ -1,63 +1,131 @@
 import { BaseScene } from "./BaseScene.js";
-import { tilePattern } from "./shared.js";
-import { Moustache } from "../class/Moustache.js";
+import { drawPatternCover } from "./shared.js";
 
 export class RecomposeScene extends BaseScene {
     constructor(shared) {
         super(shared);
         this.pattern = shared.assets.images.pattern;
-        this.moustacheImage = shared.assets.images.moustacheAlt;
-        this.moustache = null;
+        this.videoPath = shared.assets.videos ? shared.assets.videos.recompose : null;
+        this.videoElement = null;
+        this.videoPlaying = false;
+        this._handleVideoEnded = this._handleVideoEnded.bind(this);
     }
 
     enter() {
         this.shared.setOverlayText({
-            info: "Take a breath—the moustache is recomposing itself for the encore.",
-            bubble: "The universe bends to my curls once more!"
+            info: "Breathe. The royal curls are knitting back together.",
+            bubble: "Witness my majestic recomposition!"
         });
-        this._ensureMoustache();
+        this.shared.handCursor.updateShaveProximity(null);
         this.shared.handCursor.showOpenHand();
+        this._ensureVideoElement();
+        this._playVideo();
     }
 
     draw() {
         background(227, 84, 40);
-        tilePattern(this.pattern, width, height);
-
-        //draw a big white star background shape
-        noStroke();
-        fill(0, 0, 100, 80);
-        beginShape();
-        const cx = width / 2;
-        const cy = height / 2;
-        const spikes = 10;
-        const outerRadius = max(width / 2, height / 2);
-        const innerRadius = outerRadius * 0.6;
-        const angle = TWO_PI / spikes;
-        const halfAngle = angle / 2.0;
-        for (let a = 0; a < TWO_PI; a += angle) {
-            let sx = cx + cos(a) * outerRadius;
-            let sy = cy + sin(a) * outerRadius;
-            vertex(sx, sy);
-            sx = cx + cos(a + halfAngle) * innerRadius;
-            sy = cy + sin(a + halfAngle) * innerRadius;
-            vertex(sx, sy);
-        }
-        endShape(CLOSE);
-
-        this.moustache.draw(false);
+        drawPatternCover(this.pattern, width, height);
     }
 
     resize() {
-        if (!this.moustache) return;
-        const cx = width / 2 - 10;
-        const cy = height * 0.5;
-        this.moustache.x = cx;
-        this.moustache.y = cy;
+        this._updateVideoLayout();
     }
 
-    _ensureMoustache() {
-        const cx = width / 2 - 10;
-        const cy = height * 0.5;
-        this.moustache = new Moustache(cx, cy, 500, this.moustacheImage);
+    exit() {
+        this._stopVideo();
+    }
+
+    _ensureVideoElement() {
+        if (this.videoElement || !this.videoPath) {
+            return;
+        }
+
+        const video = createVideo([this.videoPath]);
+        video.hide();
+        video.attribute("playsinline", "");
+        video.attribute("muted", "");
+        video.attribute("preload", "auto");
+        video.volume(0);
+
+        const element = video.elt;
+        element.muted = true;
+        element.loop = false;
+        element.controls = false;
+        element.playsInline = true;
+        element.style.position = "fixed";
+        element.style.top = "0";
+        element.style.left = "0";
+        element.style.width = "100vw";
+        element.style.height = "100vh";
+        element.style.objectFit = "contain";
+        element.style.pointerEvents = "none";
+        element.style.zIndex = "10";
+        element.style.backgroundColor = "transparent";
+        element.style.display = "none";
+        element.style.opacity = "0";
+        element.style.transition = "opacity 200ms ease-out";
+        element.addEventListener("ended", this._handleVideoEnded);
+
+        this.videoElement = video;
+        this._updateVideoLayout();
+    }
+
+    _playVideo() {
+        if (!this.videoElement) {
+            return;
+        }
+
+        const video = this.videoElement;
+        const element = video.elt;
+        video.show();
+        video.time(0);
+        video.volume(0);
+        element.muted = true;
+        element.style.display = "block";
+        requestAnimationFrame(() => {
+            element.style.opacity = "1";
+        });
+        this._updateVideoLayout();
+        const playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+            playPromise.catch(() => {
+                // Autoplay may fail in some browsers; keep the scene visible even if paused.
+            });
+        }
+        this.videoPlaying = true;
+    }
+
+    _stopVideo() {
+        if (!this.videoElement) {
+            return;
+        }
+
+        const video = this.videoElement;
+        const element = video.elt;
+        video.pause();
+        video.time(0);
+        element.style.opacity = "0";
+        element.style.display = "none";
+        video.hide();
+        this.videoPlaying = false;
+    }
+
+    _handleVideoEnded() {
+        if (!this.videoPlaying) {
+            return;
+        }
+        this.videoPlaying = false;
+        this.shared.switchScene("ace");
+    }
+
+    _updateVideoLayout() {
+        if (!this.videoElement) {
+            return;
+        }
+        const element = this.videoElement.elt;
+        element.style.width = `${windowWidth}px`;
+        element.style.height = `${windowHeight}px`;
+        element.style.left = "0px";
+        element.style.top = "0px";
     }
 }
