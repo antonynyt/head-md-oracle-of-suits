@@ -1,4 +1,4 @@
-export function handleLandmarks(detections, gesture, handCursor, moustache, canvasWidth, canvasHeight, videoWidth = 640, videoHeight = 480) {
+export function handleLandmarks(detections, gesture, handCursor, canvasWidth, canvasHeight, videoWidth = 640, videoHeight = 480) {
     if (!detections || !detections.multiHandLandmarks || !detections.multiHandLandmarks.length) return;
 
     const handsLM = detections.multiHandLandmarks;

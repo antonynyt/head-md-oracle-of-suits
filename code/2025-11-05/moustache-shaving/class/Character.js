@@ -1,7 +1,9 @@
 export class Character {
     constructor(img, options = {}) {
         this.img = img;
-        this.anchor = options.anchor || { x: 0.5, y: 0.5 };
+    this.anchor = options.anchor || { x: 0.5, y: 0.5 };
+    this.anchors = { moustache: this.anchor, ...(options.anchors || {}) };
+    this.defaultAnchorKey = options.defaultAnchorKey || "moustache";
         // how big the character may become relative to canvas
         this.maxHeightRatio = options.maxHeightRatio || 0.8;
         this.maxWidthRatio = options.maxWidthRatio || 1.0;
@@ -37,14 +39,24 @@ export class Character {
         return { x, y, w, h };
     }
 
+    getAnchorPosition(canvasW, canvasH, anchorKey = this.defaultAnchorKey) {
+        const anchor = this.anchors[anchorKey] || this.anchors.moustache || { x: 0.5, y: 0.5 };
+        const params = this.getDrawParams(canvasW, canvasH);
+        const topLeftX = params.x - params.w / 2;
+        const topLeftY = params.y - params.h / 2;
+        const relativeX = anchor.x ?? 0.5;
+        const relativeY = anchor.y ?? 0.5;
+        const offsetX = anchor.offsetX || 0;
+        const offsetY = anchor.offsetY || 0;
+        return {
+            x: topLeftX + relativeX * params.w + offsetX,
+            y: topLeftY + relativeY * params.h + offsetY
+        };
+    }
+
     // return absolute moustache anchor position on canvas (px)
     getMoustachePosition(canvasW, canvasH) {
-        const p = this.getDrawParams(canvasW, canvasH);
-        const topLeftX = p.x - p.w / 2;
-        const topLeftY = p.y - p.h / 2;
-        const mx = topLeftX + this.anchor.x * p.w;
-        const my = topLeftY + this.anchor.y * p.h;
-        return { x: mx, y: my };
+        return this.getAnchorPosition(canvasW, canvasH, "moustache");
     }
 
     // convenience draw

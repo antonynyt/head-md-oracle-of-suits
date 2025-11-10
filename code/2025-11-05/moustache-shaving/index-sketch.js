@@ -1,129 +1,161 @@
+import { SceneManager } from "./class/SceneManager.js";
 import { GestureClassifier } from "./class/GestureClassifier.js";
 import { HandCursor } from "./class/HandCursor.js";
-import { Moustache } from "./class/Moustache.js";
-import { Character } from "./class/Character.js";
+import { handleLandmarks } from "./utils/HandleLandmarks.js";
+import { KingScene, AceScene, RecomposeScene } from "./scenes/index.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
-import { handleLandmarks } from "./utils/HandleLandmarks.js";
 
+let initialSceneName = "king";
+let assets;
 let videoElement;
 let hands;
-let detections = null;
 let cam;
-let selfieMode = true;
+let detections = null;
 let gestureClassifier;
 let handCursor;
-let moustache;
-let kingCharacter;
+let sceneManager;
+let sharedContext;
+let infoElement;
+let textBubbleElement;
 
-//images
-let king;
-let moustacheImg = [];
-let pattern;
-let handCursorImgs = {};
-
-//sound
-let shavingSound;
+const urlScene = new URLSearchParams(window.location.search).get("scene");
+if (typeof urlScene === "string" && urlScene.length > 0) {
+	initialSceneName = urlScene;
+}
 
 function preload() {
-    king = loadImage("./assets/img/king.png");
-    moustacheImg.push(loadImage("./assets/img/moustache-0.png"));
-    pattern = loadImage("./assets/img/pattern.png");
-    handCursorImgs.open = loadImage("./assets/img/hand-open.png");
-    handCursorImgs.closed = loadImage("./assets/img/hand-closed.png");
-
-    //load sound
-    shavingSound = loadSound("./assets/sounds/rasor.mp3");
+	assets = loadAssets();
 }
 
 function setup() {
-    createCanvas(windowWidth, windowHeight);
+	createCanvas(windowWidth, windowHeight);
 
-    videoElement = createCapture(VIDEO, { flipped: selfieMode });
-    videoElement.size(640, 480);
-    videoElement.hide();
+	colorMode(HSB, 360, 100, 100, 100);
 
-    colorMode(HSB, 360, 100, 100, 100);
+	if (!infoElement) {
+		infoElement = document.getElementById("info");
+	}
+	if (!textBubbleElement) {
+		textBubbleElement = document.getElementById("textBubble");
+	}
 
-    hands = new Hands({
-        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-    });
+	gestureClassifier = new GestureClassifier();
+	handCursor = new HandCursor({ open: assets.images.handOpen, closed: assets.images.handClosed }, assets.sounds.shaving);
 
-    hands.setOptions({
-        maxNumHands: 3,
-        modelComplexity: 1,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.1,
-        selfieMode: selfieMode,
-    });
+	initialiseHands();
 
-    hands.onResults(onHandsResults);
+	sharedContext = {
+		assets,
+		handCursor,
+		gestureClassifier,
+		setOverlayText: ({ info, bubble } = {}) => {
+			if (typeof info === "string" && infoElement) {
+				infoElement.textContent = info;
+			}
+			if (typeof bubble === "string" && textBubbleElement) {
+				textBubbleElement.textContent = bubble;
+			}
+		},
+		updateHandTracking: () => handleLandmarks(
+			detections,
+			gestureClassifier,
+			handCursor,
+			width,
+			height,
+			videoElement.width,
+			videoElement.height
+		)
+	};
 
-    cam = new Camera(videoElement.elt, {
-        onFrame: async () => {
-            await hands.send({ image: videoElement.elt });
-        },
-        width: width,
-        height: height
-    });
+	sceneManager = new SceneManager(sharedContext);
+	sharedContext.switchScene = (name, params = {}) => sceneManager.switchTo(name, params);
 
-    cam.start();
-    gestureClassifier = new GestureClassifier();
-    handCursor = new HandCursor(handCursorImgs, shavingSound);
+	const scenes = {
+		king: new KingScene(sharedContext),
+		ace: new AceScene(sharedContext),
+		recompose: new RecomposeScene(sharedContext)
+	};
 
-    // create character and place moustache at its anchor
-    kingCharacter = new Character(king, { anchor: { x: 0.48, y: 0.47 }, offsetY: 40 });
-    const moustachePos = kingCharacter.getMoustachePosition(width, height);
-    // keep moustache width as before (500) or tune to image size if needed
-    moustache = new Moustache(moustachePos.x, moustachePos.y, 600, moustacheImg[0]);
-}
+	Object.entries(scenes).forEach(([name, sceneInstance]) => {
+		sceneManager.register(name, sceneInstance);
+	});
 
-function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
-}
-
-function onHandsResults(results) {
-    detections = results;
+	const targetScene = scenes[initialSceneName] ? initialSceneName : "king";
+	sceneManager.switchTo(targetScene);
 }
 
 function draw() {
-    background(227, 84, 40);
-    //add pattern overlay
-    //aspect cover image
-    imageMode(CORNER);
-    let patternWidth = pattern.width;
-    let patternHeight = pattern.height;
-    const maxPatternHeight = height;
-    if (patternHeight > maxPatternHeight) {
-        const scale = maxPatternHeight / patternHeight;
-        patternHeight = maxPatternHeight;
-        patternWidth = patternWidth * scale;
-    }
-    image(pattern, 0, 0, patternWidth, patternHeight);
-
-    kingCharacter.draw(width, height);
-    let closeness = handleLandmarks(detections, gestureClassifier, handCursor, moustache, width, height, videoElement.width, videoElement.height);
-
-    if (moustache.isFullyErased()) {
-        //go to page recompose.html preserve history
-        window.location.href = "recompose.html";
-    }
-
-    moustache.draw(true);
-
-    if (closeness && closeness.state === 'closed') {
-        handCursor.showClosedHand();
-        const cursorTop = handCursor.getTop();
-        moustache.eraseAt(cursorTop.x, cursorTop.y, 50);
-    } else {
-        handCursor.showOpenHand();
-    }
-
-    handCursor.draw();
+	sceneManager.draw();
 }
 
+function windowResized() {
+	resizeCanvas(windowWidth, windowHeight);
+	sceneManager.resize(width, height);
+}
 
+function initialiseHands() {
+	const selfieMode = true;
+	videoElement = createCapture(VIDEO, { flipped: selfieMode });
+	videoElement.size(640, 480);
+	videoElement.hide();
+
+	hands = new Hands({
+		locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+	});
+
+	hands.setOptions({
+		maxNumHands: 3,
+		modelComplexity: 1,
+		minDetectionConfidence: 0.5,
+		minTrackingConfidence: 0.1,
+		selfieMode: selfieMode,
+	});
+
+	hands.onResults((results) => {
+		detections = results;
+	});
+
+	cam = new Camera(videoElement.elt, {
+		onFrame: async () => {
+			await hands.send({ image: videoElement.elt });
+		},
+		width: width,
+		height: height
+	});
+
+	cam.start();
+}
+
+function loadAssets() {
+	const king = loadImage("./assets/img/king.png");
+	const pattern = loadImage("./assets/img/pattern.png");
+	const moustachePrimary = loadImage("./assets/img/moustache-0.png");
+	const moustacheAlt = loadImage("./assets/img/moustache-1.png");
+	const moustacheEvil = loadImage("./assets/img/moustache-evil.png");
+	const aceOfSpade = loadImage("./assets/img/aceofspade.png");
+	const handOpen = loadImage("./assets/img/hand-open.png");
+	const handClosed = loadImage("./assets/img/hand-closed.png");
+	const shaving = loadSound("./assets/sounds/rasor.mp3");
+
+	return {
+		images: {
+			king,
+			pattern,
+			moustachePrimary,
+			moustacheAlt,
+			moustacheEvil,
+			aceOfSpade,
+			handOpen,
+			handClosed
+		},
+		sounds: {
+			shaving
+		}
+	};
+}
+
+window.preload = preload;
 window.setup = setup;
 window.draw = draw;
-window.preload = preload;
 window.windowResized = windowResized;
