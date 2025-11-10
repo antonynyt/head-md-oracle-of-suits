@@ -18,7 +18,7 @@ let aceofspadeCharacter;
 
 //images
 let aceofspadeImg;
-let moustacheImg = [];
+let moustacheImg;
 let pattern;
 let handCursorImgs = {};
 
@@ -27,7 +27,7 @@ let shavingSound;
 
 function preload() {
     aceofspadeImg = loadImage("./assets/img/aceofspade.png");
-    moustacheImg.push(loadImage("./assets/img/moustache-1.png"));
+    moustacheImg = loadImage("./assets/img/moustache-evil.png");
     pattern = loadImage("./assets/img/pattern.png");
     handCursorImgs.open = loadImage("./assets/img/hand-open.png");
     handCursorImgs.closed = loadImage("./assets/img/hand-closed.png");
@@ -73,13 +73,13 @@ function setup() {
 
     // create character and place moustache at its anchor
     aceofspadeCharacter = new Character(aceofspadeImg, {
-        maxHeightRatio: 0.5,
-        maxWidthRatio: 0.5,
+        maxHeightRatio: 0.8,
+        maxWidthRatio: 0.7,
         anchor: { x: 0.5, y: 0.5 }, offsetY: 0
     });
 
     const moustachePos = aceofspadeCharacter.getMoustachePosition(width, height);
-    moustache = new Moustache(moustachePos.x, moustachePos.y, 400, moustacheImg[0]);
+    moustache = new Moustache(moustachePos.x, moustachePos.y, 500, moustacheImg);
 }
 
 function windowResized() {
@@ -105,11 +105,40 @@ function draw() {
     }
     image(pattern, 0, 0, patternWidth, patternHeight);
 
+    let closeness = handleLandmarks(detections, gestureClassifier, handCursor, moustache, width, height, videoElement.width, videoElement.height);
     aceofspadeCharacter.draw(width, height);
-    handleLandmarks(detections, gestureClassifier, handCursor, moustache, width, height, videoElement.width, videoElement.height);
+
+
+
+    // cursor make the moustache change to a random position away form cursor
 
     moustache.draw(false);
     handCursor.draw();
+
+    if (closeness && closeness.state === 'closed') {
+        handCursor.showClosedHand();
+
+        const cursor = handCursor.getTop();
+
+        if (moustache.isIntersectingWith(cursor.x, cursor.y)) {
+            //get a random position not too close from cursor
+            
+            let targetX, targetY;
+            const minDistance = 500;
+            const maxAttempts = 50;
+            let attempts = 0;
+            do {
+                targetX = random(width);
+                targetY = random(height);
+                attempts++;
+            } while (dist(targetX, targetY, cursor.x, cursor.y) < minDistance && attempts < maxAttempts);
+            
+            moustache.moveTo(targetX, targetY);
+        }
+
+    } else {
+        handCursor.showOpenHand();
+    }
 }
 
 window.setup = setup;

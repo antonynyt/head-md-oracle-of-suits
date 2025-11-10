@@ -102,7 +102,7 @@ function draw() {
     image(pattern, 0, 0, patternWidth, patternHeight);
 
     kingCharacter.draw(width, height);
-    handleLandmarks(detections, gestureClassifier, handCursor, moustache, width, height, videoElement.width, videoElement.height);
+    let closeness = handleLandmarks(detections, gestureClassifier, handCursor, moustache, width, height, videoElement.width, videoElement.height);
 
     if (moustache.isFullyErased()) {
         //go to page recompose.html preserve history
@@ -110,8 +110,18 @@ function draw() {
     }
 
     moustache.draw(true);
+
+    if (closeness && closeness.state === 'closed') {
+        handCursor.showClosedHand();
+        const cursorTop = handCursor.getTop();
+        moustache.eraseAt(cursorTop.x, cursorTop.y, 50);
+    } else {
+        handCursor.showOpenHand();
+    }
+
     handCursor.draw();
 }
+
 
 window.setup = setup;
 window.draw = draw;

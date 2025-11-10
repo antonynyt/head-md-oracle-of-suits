@@ -49,9 +49,9 @@ export class Moustache {
         this.pg.noErase();
         this.pg.pop();
 
-        // if (shouldEmit) {
-        //     this.spawnParticles(px, py, radius);
-        // }
+        if (shouldEmit) {
+            this.spawnParticles(px, py, radius);
+        }
     }
 
     draw(rotateMoustache = false) {
@@ -67,13 +67,24 @@ export class Moustache {
         }
         image(this.pg, 0, 0);
         pop();
-        // this.updateParticles();
+        this.updateParticles();
     }
 
-    // Check whether the moustache buffer is fully erased (all transparent)
-    // detect 99% transparency
-    isFullyErased(sampleStep = 6, alphaThreshold = 5) {
+    //from x y manage if x y are inside moustache bounds
+    isIntersectingWith(x, y) {
+        return (x >= this.x - this.w / 2 && x <= this.x + this.w / 2 &&
+            y >= this.y - this.height / 2 && y <= this.y + this.height / 2);
+    }
 
+    moveTo(x, y) {
+        //make moustache shrink to 0.1 size then go to position then back to original size
+        
+        //shrink to 0.1 size in 5 seconds
+        
+
+    }
+
+    getErasedPercentage(sampleStep = 6, alphaThreshold = 5) {
         const imgData = this.pg.get();
         imgData.loadPixels();
         let totalPixels = 0;
@@ -90,10 +101,13 @@ export class Moustache {
                 }
             }
         }
-        if ((transparentPixels / totalPixels) >= 0.99) {
-            return true;
-        }
-        return false
+        return transparentPixels / totalPixels;
+    }
+
+    // Check whether the moustache buffer is fully erased (all transparent)
+    // detect 99% transparency
+    isFullyErased(sampleStep = 6, alphaThreshold = 5) {
+        return this.getErasedPercentage(sampleStep, alphaThreshold) >= 0.99;
 
     }
 

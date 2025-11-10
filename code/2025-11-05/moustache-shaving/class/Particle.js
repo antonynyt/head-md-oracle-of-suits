@@ -40,10 +40,6 @@ export class Particle {
     push();
     translate(this.pos.x, this.pos.y);
     rotate(this.angle);
-
-    //stroke color red
-
-
     const color = 150;
     fill(color, this.lifetime);
     rectMode(CENTER); // so rotation looks centered

@@ -18,7 +18,7 @@ export function handleLandmarks(detections, gesture, handCursor, moustache, canv
     }
 
     //ignore far hands
-    if (closestDepth > -0.03) return;
+    // if (closestDepth > -0.03) return;
 
     const landmarks = handsLM[closestIndex];
     const closeness = gesture.classify(landmarks);
@@ -50,11 +50,5 @@ export function handleLandmarks(detections, gesture, handCursor, moustache, canv
 
     handCursor.move(mappedX, mappedY);
 
-    if (closeness.state === 'closed') {
-        handCursor.showClosedHand();
-        const cursorTop = handCursor.getTop();
-        moustache.eraseAt(cursorTop.x, cursorTop.y, 50);
-    } else {
-        handCursor.showOpenHand();
-    }
+    return closeness
 }
