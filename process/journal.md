@@ -189,7 +189,7 @@ Douglas helped a lot with understanding P5JS and the canvas concept. This is rea
 
 PS: I read again some of my first personal logs. I already level up on some concepts/thoughts. Since i choose to make it public, hope Im not Oversharing. Infosec me would not agree with this (OSINT exists). This log is a security vulnerability.
 
-## first présentation (2025-11-06)
+## first presentation (2025-11-06)
 Motivation: 7/10
 
 Group is going well. And we all presented our project to each other. I feel like some people got their hopes a bit crushed by the user tests. It was like a hard back to reality after putting effort and time on their concepts.
@@ -201,3 +201,21 @@ We got [feedback](./2025-11-06.md) from users. We need to do do do the da da da.
 PS: A wise green hobbit named yoda once said that to become a media design master “You must unlearn what you have learned.” (not the hard skills) and “Train yourself to let go of everything you fear to lose.” pas facile.
 
 "How to pitch" is still to improve and in english.
+
+## Vibe coding (2025-11-10)
+
+After a talk with Nico and his Codebase. I tried to improve the code of ours using Copilot in Agent Mode: [Copilot process](./2025-11-10.md).
+
+5 minutes after saying I dont want to code with AI lazy brain paused and pushed some buttons. Ali works on a 3D handle for the razor and on the animations. We have now the recomposing evil moustache animation from our [storyboard](./images/new-storyboard-2025-11-05.jpg).
+
+- Refactoring made the interaction faster. (Douglas pointed this bad code issue)
+- Recomposing in Procrate almost done.
+- Sound is louder when shaving smthg
+
+_P.S. J'avais tord. C'est un peu tard pour se réveiller (pour ce projet). Lots and lots of thinking and talking, this project is a spiritual journey. La root est longue. Je vais partir du principe that i dont know unless i can explain so prend ça Dunning-Kruger._
+
+- Overconfidence leads to risky decisions, we know less that we think we do.
+- Seek out for constructive feedback (what’s one thing I could improve here)
+- Recalibrate often → is this confidence tested ?
+- Stay open.
+- Ask questions: [Article de blog questionnable](https://iaindotwork.substack.com/p/ftg-no12-on-questions)
