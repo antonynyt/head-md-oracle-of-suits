@@ -11,7 +11,7 @@ export class ShaveableSprite {
             rotationNoise = {},
             sampling = {},
             particles = {},
-            completionThreshold = 0.99
+            completionThreshold = 0.90
         } = options;
 
         this.x = x;
