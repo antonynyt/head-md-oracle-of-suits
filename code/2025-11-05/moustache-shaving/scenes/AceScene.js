@@ -72,7 +72,7 @@ export class AceScene extends BaseScene {
     }
 
     draw() {
-        background(227, 84, 40);
+        background(166, 84, 40);
         //add pattern overlay
         //aspect cover image
         drawPatternCover(this.pattern, width, height);
