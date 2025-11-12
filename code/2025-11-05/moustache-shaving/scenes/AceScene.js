@@ -114,9 +114,24 @@ export class AceScene extends BaseScene {
         let targetX = sprite.x;
         let targetY = sprite.y;
         let attempts = 0;
+
+        // confine to the central band so we stay clear of the top bubble and bottom info banner
+        const topSafeBand = height * 0.25;
+        const bottomSafeBand = height * 0.75;
+
+        // clamp candidate ranges so the sprite stays fully on screen and inside the safe band
+        const minX = sprite.width / 2;
+        const maxX = width - sprite.width / 2;
+        const minY = Math.max(sprite.height / 2, topSafeBand);
+        const maxY = Math.min(height - sprite.height / 2, bottomSafeBand);
+
+        // fallback in case the band collapses (very small canvas)
+        const safeMinY = Math.min(minY, height / 2);
+        const safeMaxY = Math.max(maxY, height / 2);
+
         while (attempts < this.maxAttempts) {
-            const candidateX = random(sprite.width / 2, width - sprite.width / 2);
-            const candidateY = random(sprite.height / 2, height - sprite.height / 2);
+            const candidateX = random(minX, maxX);
+            const candidateY = random(safeMinY, safeMaxY);
             if (dist(candidateX, candidateY, cursor.x, cursor.y) >= this.minDistance) {
                 targetX = candidateX;
                 targetY = candidateY;
