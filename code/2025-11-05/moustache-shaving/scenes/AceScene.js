@@ -28,7 +28,7 @@ export class AceScene extends BaseScene {
                 id: "cardDesign",
                 width: ({ canvasW, canvasH }) => {
                     const size = this.character.getSize(canvasW, canvasH);
-                    return size.w * 0.6;
+                    return size.w * 0.75;
                 },
                 anchorKey: "cardDesign",
                 eraseRadius: 10,
@@ -78,11 +78,13 @@ export class AceScene extends BaseScene {
         // cursor make the moustache change to a random position away form cursor
         if (closeness && closeness.state === "closed") {
             this.shared.handCursor.showClosedHand();
+
+            this._scratchMoustache(cursorTop);
+            this._scratchCard(cursorTop);
+
             if (moustache && moustache.isIntersectingWith(cursorTop.x, cursorTop.y)) {
                 this._teleportAwayFrom(moustache, cursorTop);
             }
-            this._scratchMoustache(cursorTop);
-            this._scratchCard(cursorTop);
         } else {
             this.shared.handCursor.showOpenHand();
         }
