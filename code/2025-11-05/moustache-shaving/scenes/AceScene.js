@@ -34,7 +34,14 @@ export class AceScene extends BaseScene {
                 eraseRadius: 10,
                 drawOptions: { rotate: false },
                 proximityRange: 200,
-                create: ({ x, y, width, image }) => new ShaveableSprite({ x, y, width, image, eraseRadius: 45 }),
+                create: ({ x, y, width, image }) => new ShaveableSprite({
+                    x,
+                    y,
+                    width,
+                    image,
+                    eraseRadius: 45,
+                    particles: { perEmission: 0 }
+                }),
                 image: () => this.cardDesignImage,
                 scratchRadius: 55,
                 recreateOnResize: true

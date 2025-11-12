@@ -100,7 +100,9 @@ export class ShaveableSprite {
         this.pg.push();
         this.pg.erase();
         this.pg.noStroke();
-        this.pg.ellipse(offsetX, offsetY, radius * 2, radius * 2);
+        // this.pg.ellipse(offsetX, offsetY, radius * 2, radius * 2);
+        this.pg.rect(offsetX - radius, offsetY - radius * 0.5, radius * 2, radius);
+
         this.pg.noErase();
         this.pg.pop();
 
