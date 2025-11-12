@@ -11,7 +11,7 @@ export class ShaveableSprite {
             rotationNoise = {},
             sampling = {},
             particles = {},
-            completionThreshold = 0.90
+            completionThreshold = 0.10
         } = options;
 
         this.x = x;
@@ -25,7 +25,7 @@ export class ShaveableSprite {
             amplitude: rotationNoise.amplitude ?? 0.5,
             clamp: rotationNoise.clamp ?? 0.2
         };
-        this.sampleStep = sampling.sampleStep ?? 6;
+        this.sampleStep = sampling.sampleStep ?? 20;
         this.alphaThreshold = sampling.alphaThreshold ?? 5;
         this.eraseCompletionThreshold = completionThreshold;
 
@@ -55,6 +55,7 @@ export class ShaveableSprite {
         }
 
         this.particles = [];
+        this.currentTransparentPixels = this.getCurrentTransparentPixels();
     }
 
     _calculateAspectRatio() {
@@ -145,11 +146,33 @@ export class ShaveableSprite {
             }
         }
 
+        let fixedTotal = totalPixels - this.currentTransparentPixels;
+
         if (totalPixels === 0) {
             return 1;
         }
 
-        return transparentPixels / totalPixels;
+        return (transparentPixels - this.currentTransparentPixels) / fixedTotal;
+    }
+
+    getCurrentTransparentPixels(sampleStep = this.sampleStep, alphaThreshold = this.alphaThreshold) {
+        const imgData = this.pg.get();
+        imgData.loadPixels();
+        let totalPixels = 0;
+        let transparentPixels = 0;
+
+        for (let y = 0; y < imgData.height; y += sampleStep) {
+            for (let x = 0; x < imgData.width; x += sampleStep) {
+                const index = (y * imgData.width + x) * 4;
+                const alpha = imgData.pixels[index + 3];
+                totalPixels++;
+                if (alpha <= alphaThreshold) {
+                    transparentPixels++;
+                }
+            }
+        }
+
+        return transparentPixels;
     }
 
     isFullyErased(sampleStep = this.sampleStep, alphaThreshold = this.alphaThreshold) {

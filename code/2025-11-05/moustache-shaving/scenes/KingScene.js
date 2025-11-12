@@ -7,7 +7,7 @@ export class KingScene extends BaseScene {
     constructor(shared) {
         super(shared);
         this.pattern = shared.assets.images.pattern;
-        this.character = new Character(shared.assets.images.king, { anchor: { x: 0.48, y: 0.47 }, offsetY: 40 });
+        this.character = new Character(shared.assets.images.king, { anchor: { x: 0.48, y: 0.47 }, offsetY: 40});
         this.moustacheImage = shared.assets.images.moustachePrimary;
         this.shaveDefinitions = [
             {
@@ -17,7 +17,9 @@ export class KingScene extends BaseScene {
                 anchorKey: "moustache",
                 drawOptions: { rotate: true },
                 proximityRange: 260,
-                create: ({ x, y, width, image }) => new Moustache(x, y, width, image),
+                create: ({ x, y, width, image }) => new Moustache(x, y, width, image, {
+                    completionThreshold: 0.70 
+                }),
                 image: this.moustacheImage
             }
         ];

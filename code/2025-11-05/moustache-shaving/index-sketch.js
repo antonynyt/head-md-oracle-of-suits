@@ -6,7 +6,7 @@ import { KingScene, AceScene, RecomposeScene } from "./scenes/index.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
 
-let initialSceneName = "ace";
+let initialSceneName = "king";
 let assets;
 let videoElement;
 let hands;

@@ -40,7 +40,8 @@ export class AceScene extends BaseScene {
                     width,
                     image,
                     eraseRadius: 45,
-                    particles: { perEmission: 0 }
+                    particles: { perEmission: 0 },
+                    completionThreshold: 0.4
                 }),
                 image: () => this.cardDesignImage,
                 scratchRadius: 55,
@@ -218,6 +219,10 @@ export class AceScene extends BaseScene {
         const definition = this.shaveDefinitions.find((def) => def.id === "cardDesign");
         const radius = definition?.scratchRadius ?? definition?.eraseRadius ?? 45;
         design.eraseAt(cursorTop.x, cursorTop.y, radius);
+
+        if (design.isFullyErased()) {
+            console.log("Card design fully erased!");
+        }
     }
 
     _scratchMoustache(cursorTop) {
