@@ -6,18 +6,21 @@ import { KingScene, AceScene, RecomposeScene } from "./scenes/index.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
 
-let initialSceneName = "king";
+let initialSceneName = "ace";
 let assets;
 let videoElement;
 let hands;
 let cam;
 let detections = null;
 let gestureClassifier;
+let smoothedGestureState = "open";
+let openCandidateStartMs = null;
 let handCursor;
 let sceneManager;
 let sharedContext;
 let infoElement;
 let textBubbleElement;
+const OPEN_DEBOUNCE_MS = 200;
 
 const urlScene = new URLSearchParams(window.location.search).get("scene");
 if (typeof urlScene === "string" && urlScene.length > 0) {
@@ -57,15 +60,18 @@ function setup() {
 				textBubbleElement.textContent = bubble;
 			}
 		},
-		updateHandTracking: () => handleLandmarks(
-			detections,
-			gestureClassifier,
-			handCursor,
-			width,
-			height,
-			videoElement.width,
-			videoElement.height
-		)
+		updateHandTracking: () => {
+			const result = handleLandmarks(
+				detections,
+				gestureClassifier,
+				handCursor,
+				width,
+				height,
+				videoElement.width,
+				videoElement.height
+			);
+			return smoothGestureResult(result);
+		}
 	};
 
 	sceneManager = new SceneManager(sharedContext);
@@ -127,6 +133,44 @@ function initialiseHands() {
 	cam.start();
 }
 
+function smoothGestureResult(rawResult) {
+	if (!rawResult) {
+		openCandidateStartMs = null;
+		return rawResult;
+	}
+
+	const now = (typeof performance !== "undefined" && typeof performance.now === "function")
+		? performance.now()
+		: Date.now();
+	const rawState = rawResult.state || "open";
+	const previousState = smoothedGestureState;
+
+	if (rawState === "closed") {
+		smoothedGestureState = "closed";
+		openCandidateStartMs = null;
+	} else if (rawState === "open") {
+		if (previousState === "closed") {
+			if (openCandidateStartMs === null) {
+				openCandidateStartMs = now;
+			}
+			if (now - openCandidateStartMs >= OPEN_DEBOUNCE_MS) {
+				smoothedGestureState = "open";
+				openCandidateStartMs = null;
+			} else {
+				smoothedGestureState = "closed";
+			}
+		} else {
+			smoothedGestureState = "open";
+			openCandidateStartMs = null;
+		}
+	} else {
+		smoothedGestureState = rawState;
+		openCandidateStartMs = null;
+	}
+
+	return { ...rawResult, state: smoothedGestureState };
+}
+
 function loadAssets() {
 	const king = loadImage("./assets/img/king.png");
 	const pattern = loadImage("./assets/img/pattern.png");
@@ -134,6 +178,8 @@ function loadAssets() {
 	const moustacheAlt = loadImage("./assets/img/moustache-1.png");
 	const moustacheEvil = loadImage("./assets/img/moustache-evil.png");
 	const aceOfSpade = loadImage("./assets/img/aceofspade.png");
+	const emptyCard = loadImage("./assets/img/empty-card.png");
+	const aceCardDesign = loadImage("./assets/img/ace-card-design.png");
 	const handOpen = loadImage("./assets/img/hand-open.png");
 	const handClosed = loadImage("./assets/img/hand-closed.png");
 	const shaving = loadSound("./assets/sounds/rasor.mp3");
@@ -147,6 +193,8 @@ function loadAssets() {
 			moustacheAlt,
 			moustacheEvil,
 			aceOfSpade,
+			emptyCard,
+			aceCardDesign,
 			handOpen,
 			handClosed
 		},
