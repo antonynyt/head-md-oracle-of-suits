@@ -12,10 +12,7 @@ export class RecomposeScene extends BaseScene {
     }
 
     enter() {
-        this.shared.setOverlayText({
-            info: "Breathe. The royal curls are knitting back together.",
-            bubble: "Witness my majestic recomposition!"
-        });
+        this.shared.setOverlayText({ info: "", bubble: "" });
         this.shared.handCursor.updateShaveProximity(null);
         this.shared.handCursor.showOpenHand();
         this._ensureVideoElement();

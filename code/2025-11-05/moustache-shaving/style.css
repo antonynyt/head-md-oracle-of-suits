@@ -72,3 +72,11 @@ canvas {
   border-right: 3vw solid transparent;
   border-top: 3vw solid #fff;
 }
+
+#textBubble:empty {
+  display: none;
+}
+
+#info:empty {
+  display: none;
+}

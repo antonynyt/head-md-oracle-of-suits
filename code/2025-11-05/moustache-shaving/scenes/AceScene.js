@@ -64,7 +64,7 @@ export class AceScene extends BaseScene {
     enter() {
         this.shared.setOverlayText({
             info: "Be extremely careful",
-            bubble: "What's that? Go away! But be careful not to scratch me!"
+            bubble: "I carried the King's tax! Back in 1765, during card regulations in the UK I was stamped every deck had to pay through me!"
         });
         this.shaveTargets.clear();
         this._ensureShaveTargets();
