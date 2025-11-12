@@ -219,3 +219,12 @@ _P.S. J'avais tord. C'est un peu tard pour se réveiller (pour ce projet). Lots 
 - Recalibrate often → is this confidence tested ?
 - Stay open.
 - Ask questions: [Article de blog questionnable](https://iaindotwork.substack.com/p/ftg-no12-on-questions)
+
+## 2025-11-11 New scéno 
+
+We worked on the PDF presentation.
+Ali made the user journey and 3D spacial scenography. We won't make a 3D rasor because 2D is better with our Art direction.
+
+We decided to change the physical form to avoid projecting ourselves with half done objects. So we made it the less suggestive possible. btw Pablo is such a source of motivation. Good news I still have mine it's just not stimulated. I was afraid I had it lost 4ever lol.
+
+Also it made me go to the wood workshop even if it was for an adapter to hang the TV on a tripod. Laure helped with the machines :)
