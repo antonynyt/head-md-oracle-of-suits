@@ -2,15 +2,22 @@ import { BaseScene } from "./BaseScene.js";
 import { drawPatternCover } from "./shared.js";
 import { Character } from "../class/Character.js";
 import { Moustache } from "../class/Moustache.js";
+import { ShaveableSprite } from "../class/ShaveableSprite.js";
 
 export class AceScene extends BaseScene {
     constructor(shared) {
         super(shared);
         this.pattern = shared.assets.images.pattern;
-        this.character = new Character(shared.assets.images.aceOfSpade, {
+        this.cardImage = shared.assets.images.emptyCard ?? shared.assets.images.aceOfSpade;
+        this.cardDesignImage = shared.assets.images.aceCardDesign ?? shared.assets.images.aceOfSpade;
+        this.character = new Character(this.cardImage, {
             maxHeightRatio: 0.8,
             maxWidthRatio: 0.7,
             anchor: { x: 0.5, y: 0.5 },
+            anchors: {
+                moustache: { x: 0.5, y: 0.5 },
+                cardDesign: { x: 0.5, y: 0.5 }
+            },
             offsetY: 0
         });
         this.moustacheImage = shared.assets.images.moustacheEvil;
@@ -18,10 +25,25 @@ export class AceScene extends BaseScene {
         this.maxAttempts = 50;
         this.shaveDefinitions = [
             {
+                id: "cardDesign",
+                width: ({ canvasW, canvasH }) => {
+                    const size = this.character.getSize(canvasW, canvasH);
+                    return size.w * 0.6;
+                },
+                anchorKey: "cardDesign",
+                eraseRadius: 10,
+                drawOptions: { rotate: false },
+                proximityRange: 200,
+                create: ({ x, y, width, image }) => new ShaveableSprite({ x, y, width, image, eraseRadius: 45 }),
+                image: () => this.cardDesignImage,
+                scratchRadius: 55,
+                recreateOnResize: true
+            },
+            {
                 id: "moustache",
                 width: 500,
                 anchorKey: "moustache",
-                eraseRadius: 40,
+                eraseRadius: 10,
                 drawOptions: { rotate: false },
                 proximityRange: 220,
                 create: ({ x, y, width, image }) => new Moustache(x, y, width, image),
@@ -47,11 +69,11 @@ export class AceScene extends BaseScene {
         //aspect cover image
         drawPatternCover(this.pattern, width, height);
 
-    const closeness = this.shared.updateHandTracking();
-    this.character.draw(width, height);
-    const cursorTop = this.shared.handCursor.getTop();
-    this._updateCursorProximity(cursorTop);
-    const moustache = this.shaveTargets.get("moustache");
+        const closeness = this.shared.updateHandTracking();
+        this.character.draw(width, height);
+        const cursorTop = this.shared.handCursor.getTop();
+        this._updateCursorProximity(cursorTop);
+        const moustache = this.shaveTargets.get("moustache");
 
         // cursor make the moustache change to a random position away form cursor
         if (closeness && closeness.state === "closed") {
@@ -59,6 +81,8 @@ export class AceScene extends BaseScene {
             if (moustache && moustache.isIntersectingWith(cursorTop.x, cursorTop.y)) {
                 this._teleportAwayFrom(moustache, cursorTop);
             }
+            this._scratchMoustache(cursorTop);
+            this._scratchCard(cursorTop);
         } else {
             this.shared.handCursor.showOpenHand();
         }
@@ -73,6 +97,9 @@ export class AceScene extends BaseScene {
 
     _ensureShaveTargets({ refreshOnly = false } = {}) {
         for (const definition of this.shaveDefinitions) {
+            if (refreshOnly && definition.recreateOnResize) {
+                this.shaveTargets.delete(definition.id);
+            }
             const anchorPos = this.character.getAnchorPosition(width, height, definition.anchorKey);
             const posX = anchorPos.x + (definition.offsetX || 0);
             const posY = anchorPos.y + (definition.offsetY || 0);
@@ -122,16 +149,17 @@ export class AceScene extends BaseScene {
         // clamp candidate ranges so the sprite stays fully on screen and inside the safe band
         const minX = sprite.width / 2;
         const maxX = width - sprite.width / 2;
-        const minY = Math.max(sprite.height / 2, topSafeBand);
-        const maxY = Math.min(height - sprite.height / 2, bottomSafeBand);
+        let minY = Math.max(sprite.height / 2, topSafeBand);
+        let maxY = Math.min(height - sprite.height / 2, bottomSafeBand);
 
-        // fallback in case the band collapses (very small canvas)
-        const safeMinY = Math.min(minY, height / 2);
-        const safeMaxY = Math.max(maxY, height / 2);
+        if (minY >= maxY) {
+            minY = height / 2;
+            maxY = height / 2;
+        }
 
         while (attempts < this.maxAttempts) {
             const candidateX = random(minX, maxX);
-            const candidateY = random(safeMinY, safeMaxY);
+            const candidateY = random(minY, maxY);
             if (dist(candidateX, candidateY, cursor.x, cursor.y) >= this.minDistance) {
                 targetX = candidateX;
                 targetY = candidateY;
@@ -168,5 +196,31 @@ export class AceScene extends BaseScene {
         } else {
             this.shared.handCursor.updateShaveProximity(null);
         }
+    }
+
+    _scratchCard(cursorTop) {
+        const design = this.shaveTargets.get("cardDesign");
+        if (!design || !cursorTop) {
+            return;
+        }
+        if (!design.isIntersectingWith(cursorTop.x, cursorTop.y)) {
+            return;
+        }
+        const definition = this.shaveDefinitions.find((def) => def.id === "cardDesign");
+        const radius = definition?.scratchRadius ?? definition?.eraseRadius ?? 45;
+        design.eraseAt(cursorTop.x, cursorTop.y, radius);
+    }
+
+    _scratchMoustache(cursorTop) {
+        const moustache = this.shaveTargets.get("moustache");
+        if (!moustache || !cursorTop) {
+            return;
+        }
+        if (!moustache.isIntersectingWith(cursorTop.x, cursorTop.y)) {
+            return;
+        }
+        const definition = this.shaveDefinitions.find((def) => def.id === "moustache");
+        const radius = definition?.scratchRadius ?? definition?.eraseRadius ?? 40;
+        moustache.eraseAt(cursorTop.x, cursorTop.y, radius);
     }
 }
