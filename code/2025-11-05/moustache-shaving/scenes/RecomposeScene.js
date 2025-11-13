@@ -20,7 +20,7 @@ export class RecomposeScene extends BaseScene {
     }
 
     draw() {
-        background(227, 84, 20);
+        background(227, 84, 40);
         // drawPatternCover(this.pattern, width, height);
     }
 

@@ -18,7 +18,7 @@ export class AceScene extends BaseScene {
                 moustache: { x: 0.5, y: 0.5 },
                 cardDesign: { x: 0.5, y: 0.5 }
             },
-            offsetY: 0
+            offsetY: 100
         });
         this.moustacheImage = shared.assets.images.moustacheEvil;
         this.minDistance = 500;
@@ -39,9 +39,9 @@ export class AceScene extends BaseScene {
                     y,
                     width,
                     image,
-                    eraseRadius: 45,
+                    eraseRadius: 30,
                     particles: { perEmission: 0 },
-                    completionThreshold: 0.4
+                    completionThreshold: 0.7
                 }),
                 image: () => this.cardDesignImage,
                 scratchRadius: 55,
@@ -52,9 +52,12 @@ export class AceScene extends BaseScene {
                 width: 500,
                 anchorKey: "moustache",
                 eraseRadius: 10,
-                drawOptions: { rotate: false },
+                drawOptions: { rotate: true },
                 proximityRange: 220,
-                create: ({ x, y, width, image }) => new Moustache(x, y, width, image),
+                create: ({ x, y, width, image }) => new Moustache(x, y, width, image, {
+                    //rotation speed fast and small rotation
+                    rotationNoise: { speed: 0.05, amplitude: 0.3, clamp: 0.1 },
+                }),
                 image: this.moustacheImage
             }
         ];
@@ -70,7 +73,7 @@ export class AceScene extends BaseScene {
     enter() {
         this.shared.setOverlayText({
             info: "Be careful",
-            bubble: "I carried the King's tax! Back in 1765, during card regulations in the UK I was stamped every deck had to pay through me!"
+            bubble: "I am the Ace of Spades."
         });
         this.shaveTargets.clear();
         this._ensureShaveTargets();
@@ -93,6 +96,10 @@ export class AceScene extends BaseScene {
             return
         } else if (!this.videoPlaying && this.videoElement) {
             this.videoElement.hide();
+            this.shared.setOverlayText({
+                info: "Be careful",
+                bubble: "Back in 1765, during card regulations in the UK I was stamped. Every deck had to pay through me!"
+            });
         }
         const cursorTop = this.shared.handCursor.getTop();
         this._updateCursorProximity(cursorTop);
@@ -339,6 +346,7 @@ export class AceScene extends BaseScene {
 
         if (design.isFullyErased()) {
             console.log("Card design fully erased!");
+            this.shared.switchScene("aceEnd");
         }
     }
 
