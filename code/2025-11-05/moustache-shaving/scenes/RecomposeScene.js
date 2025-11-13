@@ -88,6 +88,10 @@ export class RecomposeScene extends BaseScene {
             });
         }
         this.videoPlaying = true;
+        // after 2 time video volume to 1
+        setTimeout(() => {
+            this.shared.assets.sounds.music.setVolume(0.3);
+        }, 2000);
     }
 
     _stopVideo() {
@@ -110,6 +114,7 @@ export class RecomposeScene extends BaseScene {
             return;
         }
         this.videoPlaying = false;
+        this.shared.assets.sounds.music.setVolume(0.5);
         this.shared.switchScene("ace");
     }
 
