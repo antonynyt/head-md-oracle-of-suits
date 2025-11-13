@@ -1,7 +1,3 @@
-- [ ] children class for each moustache instead of img[]
-- [ ] 
-- [ ] 
-- [ ] 
-
-### later
-- [ ] refactor closeness
+- Dialog popup on moustache
+- Particle based on moustache img pixel color
+- scratched/ripping design-feel on shaving
