@@ -219,3 +219,20 @@ _P.S. J'avais tord. C'est un peu tard pour se réveiller (pour ce projet). Lots 
 - Recalibrate often → is this confidence tested ?
 - Stay open.
 - Ask questions: [Article de blog questionnable](https://iaindotwork.substack.com/p/ftg-no12-on-questions)
+
+## 2025-11-11 New scéno 
+
+We worked on the PDF presentation.
+Ali made the user journey and 3D spacial scenography. We won't make a 3D rasor because 2D is better with our Art direction.
+
+We decided to change the physical form to avoid projecting ourselves with half done objects. So we made it the less suggestive possible. btw Pablo is such a source of motivation. Good news I still have mine it's just not stimulated. I was afraid I had it lost 4ever lol.
+
+Also it made me go to the wood workshop even if it was for an adapter to hang the TV on a tripod. Laure helped with the machines :)
+
+## 2025-11-12
+
+We worked on PDF, I coded all day to finally solve the get erased percentage method. Il a fallu 2 cerveau (merci Ari). 
+
+We will cut out the rasor in Black plexi with colorful stickers with an offset. so we can simulate a black stroke. we will also cut a stand for the rasor the 13.11.
+
+Im a bit frustrated to present Friday something that's half done but hope they get the intent. In the meantime, Ill try to get things done as fast as my brain can process (no overclock possible). The intro animation is finally done. but we should give more story context with other animations. it's a bit abrupt. The design is great and the code is satisfying. Also cool group work dynamic today.
