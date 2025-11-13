@@ -7,7 +7,7 @@ export class KingScene extends BaseScene {
     constructor(shared) {
         super(shared);
         this.pattern = shared.assets.images.pattern;
-        this.character = new Character(shared.assets.images.king, { anchor: { x: 0.48, y: 0.47 }, offsetY: 40});
+        this.character = new Character(shared.assets.images.king, { anchor: { x: 0.48, y: 0.47 }, offsetY: 200});
         this.moustacheImage = shared.assets.images.moustachePrimary;
         this.shaveDefinitions = [
             {
@@ -29,7 +29,7 @@ export class KingScene extends BaseScene {
     enter() {
         this.shared.setOverlayText({
             info: "Shave that ugly moustache away!",
-            bubble: "I'm the King of Hearts. The only king with a spotless face! My moustache was lost due to misprint. Wait... what's that?"
+            bubble: "I'm the King of Hearts. The only king with a spotless face! My moustache was lost due to misprint. So... what's that?"
         });
         this.shaveTargets.clear();
         this._ensureShaveTargets();
@@ -44,7 +44,7 @@ export class KingScene extends BaseScene {
         const erasePercentage = this.shaveTargets.get("moustache")?.getErasedPercentage() || 0;
         let percentage = erasePercentage*100;
         //map percentage, use the 70% to limit the max value to 100%
-        percentage = map(percentage, 0, 50, 0, 80);
+        percentage = map(percentage, 0, 50, 0, 70);
         let inverted = 100 - percentage;
         
         document.querySelector('.hill').style.transform = `translateX(-50%) translateY(${inverted}%)`;

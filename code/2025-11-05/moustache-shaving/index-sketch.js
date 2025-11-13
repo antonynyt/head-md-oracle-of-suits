@@ -2,7 +2,7 @@ import { SceneManager } from "./class/SceneManager.js";
 import { GestureClassifier } from "./class/GestureClassifier.js";
 import { HandCursor } from "./class/HandCursor.js";
 import { handleLandmarks } from "./utils/HandleLandmarks.js";
-import { KingScene, AceScene, RecomposeScene } from "./scenes/index.js";
+import { KingScene, AceScene, RecomposeScene, AceEndScene, TBCScene } from "./scenes/index.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js";
 import "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js";
 
@@ -20,7 +20,7 @@ let sceneManager;
 let sharedContext;
 let infoElement;
 let textBubbleElement;
-const OPEN_DEBOUNCE_MS = 200;
+const OPEN_DEBOUNCE_MS = 300;
 
 const urlScene = new URLSearchParams(window.location.search).get("scene");
 if (typeof urlScene === "string" && urlScene.length > 0) {
@@ -80,7 +80,9 @@ function setup() {
 	const scenes = {
 		king: new KingScene(sharedContext),
 		ace: new AceScene(sharedContext),
-		recompose: new RecomposeScene(sharedContext)
+		recompose: new RecomposeScene(sharedContext),
+		aceEnd: new AceEndScene(sharedContext),
+		tbc: new TBCScene(sharedContext)
 	};
 
 	Object.entries(scenes).forEach(([name, sceneInstance]) => {
@@ -184,6 +186,9 @@ function loadAssets() {
 	const handClosed = loadImage("./assets/img/hand-closed.png");
 	const shaving = loadSound("./assets/sounds/rasor.mp3");
 	const recomposeVideo = "./assets/videos/recomposing.webm";
+	const introAceVideo = "./assets/videos/intro-aceofspade.webm";
+	const endAceVideo = "./assets/videos/end-aceofspade.webm";
+	const tbcVideo = "./assets/videos/tbc.webm";
 
 	return {
 		images: {
@@ -202,7 +207,10 @@ function loadAssets() {
 			shaving
 		},
 		videos: {
-			recompose: recomposeVideo
+			recompose: recomposeVideo,
+			introAce: introAceVideo,
+			endAce: endAceVideo,
+			tbc: tbcVideo
 		}
 	};
 }
