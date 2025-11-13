@@ -100,6 +100,10 @@ export class TBCScene extends BaseScene {
             return;
         }
         this.videoPlaying = false;
+        //stop music
+        if (this.shared.assets.sounds.music) {
+            this.shared.assets.sounds.music.stop();
+        }
     }
 
     _updateVideoLayout() {
