@@ -9,7 +9,7 @@ export class Particle {
     this.vel.mult(random(0.5, 2));
     this.acc = createVector(0, 0);
     this.w = 20;
-    this.h = 1;
+    this.h = 5;
     this.lifetime = 255;
 
     // NEW: Add rotation and spin
@@ -40,8 +40,8 @@ export class Particle {
     push();
     translate(this.pos.x, this.pos.y);
     rotate(this.angle);
-    const color = 150;
-    fill(color, this.lifetime);
+    noStroke();
+    fill(30, 100, 100, this.lifetime);
     rectMode(CENTER); // so rotation looks centered
     rect(0, 0, this.w, this.h);
 

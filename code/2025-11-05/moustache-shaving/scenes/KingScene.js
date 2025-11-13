@@ -38,9 +38,16 @@ export class KingScene extends BaseScene {
 
     draw() {
         background(227, 84, 40);
-        //add pattern overlay
-        //aspect cover image
         drawPatternCover(this.pattern, width, height);
+
+        // Draw the hill based on erase percentage
+        const erasePercentage = this.shaveTargets.get("moustache")?.getErasedPercentage() || 0;
+        let percentage = erasePercentage*100;
+        //map percentage, use the 70% to limit the max value to 100%
+        percentage = map(percentage, 0, 50, 0, 80);
+        let inverted = 100 - percentage;
+        
+        document.querySelector('.hill').style.transform = `translateX(-50%) translateY(${inverted}%)`;
 
         this.character.draw(width, height);
         const closeness = this.shared.updateHandTracking();
@@ -49,6 +56,7 @@ export class KingScene extends BaseScene {
 
         if (this._areAllTargetsCleared()) {
             this.shared.switchScene("recompose");
+            document.querySelector('.hill').style.transform = `translateX(-50%) translateY(100%)`;
             return;
         }
 
