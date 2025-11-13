@@ -43,6 +43,13 @@ function setup() {
 		textBubbleElement = document.getElementById("textBubble");
 	}
 
+	if (assets.sounds.music) {
+        assets.sounds.music.setLoop(true);
+        assets.sounds.music.play();
+		//volume set in p5js is from 0 to 1
+		assets.sounds.music.setVolume(0.5);
+    }
+
 	gestureClassifier = new GestureClassifier();
 	handCursor = new HandCursor({ open: assets.images.handOpen, closed: assets.images.handClosed }, assets.sounds.shaving);
 
@@ -185,6 +192,7 @@ function loadAssets() {
 	const handOpen = loadImage("./assets/img/hand-open.png");
 	const handClosed = loadImage("./assets/img/hand-closed.png");
 	const shaving = loadSound("./assets/sounds/rasor.mp3");
+	const music = loadSound("./assets/sounds/music.mp3");
 	const recomposeVideo = "./assets/videos/recomposing.webm";
 	const introAceVideo = "./assets/videos/intro-aceofspade.webm";
 	const endAceVideo = "./assets/videos/end-aceofspade.webm";
@@ -204,7 +212,8 @@ function loadAssets() {
 			handClosed
 		},
 		sounds: {
-			shaving
+			shaving,
+			music
 		},
 		videos: {
 			recompose: recomposeVideo,

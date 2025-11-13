@@ -40,12 +40,12 @@ export class RecomposeScene extends BaseScene {
         const video = createVideo([this.videoPath]);
         video.hide();
         video.attribute("playsinline", "");
-        video.attribute("muted", "");
+        // video.attribute("muted", "");
         video.attribute("preload", "auto");
-        video.volume(0);
+        video.volume(1);
 
         const element = video.elt;
-        element.muted = true;
+        // element.muted = true;
         element.loop = false;
         element.controls = false;
         element.playsInline = true;
@@ -76,8 +76,6 @@ export class RecomposeScene extends BaseScene {
         const element = video.elt;
         video.show();
         video.time(0);
-        video.volume(0);
-        element.muted = true;
         element.style.display = "block";
         requestAnimationFrame(() => {
             element.style.opacity = "1";
