@@ -227,12 +227,19 @@ Ali made the user journey and 3D spacial scenography. We won't make a 3D rasor b
 
 We decided to change the physical form to avoid projecting ourselves with half done objects. So we made it the less suggestive possible. btw Pablo is such a source of motivation. Good news I still have mine it's just not stimulated. I was afraid I had it lost 4ever lol.
 
-Also it made me go to the wood workshop even if it was for an adapter to hang the TV on a tripod. Laure helped with the machines :)
+Also it made me go to the [wood workshop](./images/bois-2025-11-11.jpg) even if it was for an adapter to hang the TV on a tripod. Laure helped with the machines :)
 
 ## 2025-11-12
 
-We worked on PDF, I coded all day to finally solve the get erased percentage method. Il a fallu 2 cerveau (merci Ari). 
+We worked on PDF, I coded all day to finally solve the [get erased percentage method](https://github.com/antonynyt/head-md-oracle-of-suits/commit/3513532e91ab44c964a3927b649b85378934c833). Il a fallu 2 cerveau (merci Ari). 
 
 We will cut out the rasor in Black plexi with colorful stickers with an offset. so we can simulate a black stroke. we will also cut a stand for the rasor the 13.11.
 
 Im a bit frustrated to present Friday something that's half done but hope they get the intent. In the meantime, Ill try to get things done as fast as my brain can process (no overclock possible). The intro animation is finally done. but we should give more story context with other animations. it's a bit abrupt. The design is great and the code is satisfying. Also cool group work dynamic today.
+
+## 2025-11-13 & 2025-11-14
+
+Lisa suggested a "to be continued" screen. That was the best idea to have a closure.
+
+[View img razor plexi](./images/razor-plexi-2025-11-13.jpg).
+[View final intallation setup img](./images/final-installation-2025-11-16.jpg)
