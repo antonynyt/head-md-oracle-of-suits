@@ -3,6 +3,7 @@ html, body {
   padding: 0;
   font-size: 17px;
   overflow: hidden;
+  cursor: none;
 }
 
 canvas {

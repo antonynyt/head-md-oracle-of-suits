@@ -104,6 +104,11 @@ export class TBCScene extends BaseScene {
         if (this.shared.assets.sounds.music) {
             this.shared.assets.sounds.music.stop();
         }
+
+        //set timeout to switch scene after 1 second
+        setTimeout(() => {
+            window.location.reload();
+        }, 3000);
     }
 
     _updateVideoLayout() {
