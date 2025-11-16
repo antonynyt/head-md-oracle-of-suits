@@ -6,7 +6,7 @@ Exploring the History of Playing Cards through Gesture. We are designing embodie
 An interactive game following the journey of an animated mustache escaping through a deck of cards. Visitors navigate short interactive “stories” and interact using a colorful razor, whose shaving motion reveals anecdotes. The whole experience is a playful metaphor for identity, rejection, and curiosity.
 
 - [Open the website live version.](https://antonynyt.github.io/head-md-oracle-of-suits/code/2025-11-05/moustache-shaving/)
-- [View final prototype code](./2025-11-05/moustache-shaving/)
+- [View final prototype code](./code/2025-11-05/moustache-shaving/)
 
 ## What’s in this repo
 - [process/](process) — Project process
